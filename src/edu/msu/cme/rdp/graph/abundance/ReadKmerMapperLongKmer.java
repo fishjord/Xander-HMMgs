@@ -16,37 +16,34 @@
  */
 package edu.msu.cme.rdp.graph.abundance;
 
-import edu.msu.cme.rdp.kmer.set.KmerSet;
-import edu.msu.cme.rdp.kmer.set.NuclKmerGenerator;
+import edu.msu.cme.rdp.kmer.Kmer;
+import edu.msu.cme.rdp.kmer.set.KmerIterator;
 import edu.msu.cme.rdp.readseq.readers.SequenceReader;
 import edu.msu.cme.rdp.readseq.readers.Sequence;
 import edu.msu.cme.rdp.readseq.utils.IUBUtilities;
-import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  *
  * @author fishjord
  */
-public class ReadKmerMapper {
+public class ReadKmerMapperLongKmer {
 
     private final int k;
-    private final KmerSet<Set<String>> kmerSet;
+    private final Map<Kmer, Set<String>> kmerSet;
     private int processedSeqs = 0;
 
-    public ReadKmerMapper(File contigFile, int k) throws IOException {
+
+    public ReadKmerMapperLongKmer(File contigFile, int k) throws IOException {
         this.k = k;
 
         List<Sequence> contigSeqs = SequenceReader.readFully(contigFile);
 
-        kmerSet = new KmerSet();
+        kmerSet = new HashMap();
 
         Sequence seq;
         for (int index = 0; index < contigSeqs.size(); index++) {
@@ -54,60 +51,57 @@ public class ReadKmerMapper {
             String seqstr = seq.getSeqString();
             addKmers(seqstr, index);
         }
-
-        kmerSet.printStats();
     }
 
     private void addKmers(String seqString, int contigIndex) {
-
-        kmerGen = new NuclKmerGenerator(seqString, k);
+        KmerIterator kmerGen = new KmerIterator(seqString, k);
+        Kmer val;
+        Set<String> kmers;
 
         while (kmerGen.hasNext()) {
             val = kmerGen.next();
-            Set<String> kmers = kmerSet.get(val);
+            kmers = kmerSet.get(val);
             if (kmers == null) {
                 kmers = new HashSet();
-                kmerSet.add(val, kmers);
+                kmerSet.put(val, kmers);
             }
         }
     }
 
-    private long val;
-    private NuclKmerGenerator kmerGen;
-    private Set<String> readIds;
-
     private void processRead(Sequence seq) {
+        if(seq.getSeqString().length() < k) {
+            return;
+        }
+
         processRead(seq.getSeqName(), seq.getSeqString());
         processRead(seq.getSeqName(), IUBUtilities.reverseComplement(seq.getSeqString()));
         processedSeqs++;
     }
 
     private void processRead(String name, String seqString) {
+        KmerIterator kmerGen = new KmerIterator(seqString, k);
+        Kmer val;
+        Set<String> kmers;
 
-        kmerGen = new NuclKmerGenerator(seqString, k);
-
+        int idx = 0;
         while (kmerGen.hasNext()) {
             val = kmerGen.next();
 
-            readIds = kmerSet.get(val);
+            kmers = kmerSet.get(val);
+            idx++;
 
-            if (readIds == null) {
+            if (kmers == null) {
                 continue;
             }
 
-            readIds.add(name);
+            kmers.add(name + ":" + idx);
         }
     }
 
     public void printResults(PrintStream out) throws IOException {
-        Set<Long> keys = kmerSet.getKeys();
-
-        kmerGen = new NuclKmerGenerator("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", k);
-
-        //kmer shouldn't be null yet, so we'll use it to decode the longs
-        for(Long key : keys) {
-            out.print(kmerGen.decodeLong(key));
-            for(String readid : kmerSet.get(key)) {
+        for (Kmer kmer : kmerSet.keySet()) {
+            out.print(kmer);
+            for (String readid : kmerSet.get(kmer)) {
                 out.print(" " + readid);
             }
             out.println();
@@ -126,12 +120,6 @@ public class ReadKmerMapper {
         final int maxThreads;
         final int maxTasks = 25000;
 
-        if(k > 31) {
-            System.err.println("k > 31, passing off to the long kmer mapper");
-            ReadKmerMapperLongKmer.main(args);
-            return;
-        }
-
         if (args.length == 4) {
             maxThreads = Integer.valueOf(args[3]);
         } else {
@@ -146,7 +134,7 @@ public class ReadKmerMapper {
         System.err.println("*  Kmer length:             " + k);
 
         long startTime = System.currentTimeMillis();
-        final ReadKmerMapper kmerCounter = new ReadKmerMapper(nuclContigs, k);
+        final ReadKmerMapperLongKmer kmerCounter = new ReadKmerMapperLongKmer(nuclContigs, k);
         System.err.println("Kmer trie built in " + (System.currentTimeMillis() - startTime) + " ms");
 
         System.out.println();

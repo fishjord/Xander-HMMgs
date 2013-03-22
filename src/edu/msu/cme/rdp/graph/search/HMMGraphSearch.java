@@ -84,7 +84,7 @@ public class HMMGraphSearch {
                 scorer.consume(c);
             }
 
-            ret.add(new SearchResult(target.getKmer(), nuclSeq, alignment, protSeq, SearchResult.SearchDirection.left, lStartingState, r.maxScore, scorer.getMaxScore(), r.searchTime));
+            ret.add(new SearchResult(target, target.getKmer(), nuclSeq, alignment, protSeq, SearchResult.SearchDirection.left, lStartingState, r.maxScore, scorer.getMaxScore(), r.searchTime));
         }
 
         List<PartialResult> rightParts = kpathsSearch(target.getForwardHmm(), target.getStartState(), framedKmer, target.getFilter().new RightCodonFacade(target.getKmer()), true);
@@ -105,7 +105,7 @@ public class HMMGraphSearch {
                 scorer.consume(c);
             }
 
-            ret.add(new SearchResult(target.getKmer(), nuclSeq, alignment, protSeq, SearchResult.SearchDirection.right, target.getStartState(), r.maxScore, scorer.getMaxScore(), r.searchTime));
+            ret.add(new SearchResult(target, target.getKmer(), nuclSeq, alignment, protSeq, SearchResult.SearchDirection.right, target.getStartState(), r.maxScore, scorer.getMaxScore(), r.searchTime));
         }
 
         return ret;
@@ -182,7 +182,7 @@ public class HMMGraphSearch {
                     }
 
                     shortestPathEdges.get(starting).add(ak_i_1);
-                    goalNode = astarSearch(hmm, starting, walker, forward, seenKmers, shortestPathEdges.get(starting));
+                    goalNode = astarSearch(hmm, starting, walker, seenKmers, shortestPathEdges.get(starting));
 
                     int before = seenKmers.size();
                     CandidatePath spur = new CandidatePath(goalNode, seenKmers);
@@ -261,13 +261,12 @@ public class HMMGraphSearch {
         startingNode.fval = 0;
         startingNode.score = 0;
 
-        return astarSearch(hmm, startingNode, walker, forward, seenKmers, disallowedLinks);
+        return astarSearch(hmm, startingNode, walker, seenKmers, disallowedLinks);
     }
 
     private AStarNode astarSearch(final ProfileHMM hmm,
             AStarNode startingNode,
             CodonWalker walker,
-            final boolean forward,
             Set<Kmer> seenKmers,
             Set<AStarNode> disallowedLinks) throws IOException, InterruptedException {
         NodeEnumerator nodeEnumerator = new NodeEnumerator(hmm);
@@ -375,6 +374,9 @@ public class HMMGraphSearch {
         return interGoal;
     }
 
+    /**
+     * Assemble the path, from the goal to the start
+     */
     public static PartialResult partialResultFromGoal(AStarNode goal, boolean forward, boolean protSearch, int kmerLength, long searchTime) {
         StringBuilder nuclSeq = new StringBuilder();
         StringBuilder alignmentSeq = new StringBuilder();
@@ -390,17 +392,19 @@ public class HMMGraphSearch {
                 char[] emission;
 
                 if (protSearch) {
-                    if (forward) {
+                    if(forward) {
+                        //If we're to the right the codon is at the end of the kmer
                         emission = new char[]{kmer[kmer.length - 3], kmer[kmer.length - 2], kmer[kmer.length - 1]};
                     } else {
-                        emission = new char[]{kmer[2], kmer[1], kmer[0]};
+                        //If we're going to the left the codon is still at the right
+                        //end of this kmer BUT it is in reverse order (DIFFERENT
+                        //than in the path returned by CodonWalker.getPathString())
+                        emission = new char[]{kmer[kmer.length - 1], kmer[kmer.length - 2], kmer[kmer.length - 3]};
                     }
                 } else {
-                    if (forward) {
-                        emission = new char[]{kmer[kmer.length - 1]};
-                    } else {
-                        emission = new char[]{kmer[0]};
-                    }
+                    //In the single emission case the last character in the kmer
+                    //is always right
+		    emission = new char[]{kmer[kmer.length - 1]};
                 }
 
                 if (goal.state == 'd') {
@@ -424,10 +428,12 @@ public class HMMGraphSearch {
                 }
 
 
-                if (goal.state != 'd') {
+                if (goal.state != 'd') { //No emission on delete states
                     if (forward) {
+                        //prepend for forward
                         nuclSeq.insert(0, emission);
                     } else {
+                        //append for reverse (we're building in the 'right' direction)
                         nuclSeq.append(emission);
                     }
                 }

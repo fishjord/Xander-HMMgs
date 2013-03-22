@@ -1,5 +1,7 @@
 package edu.msu.cme.rdp.graph.search;
 
+import edu.msu.cme.rdp.kmer.io.KmerStart;
+
 /*
  * Copyright (C) 2012 Jordan Fish <fishjord at msu.edu>
  *
@@ -22,7 +24,7 @@ package edu.msu.cme.rdp.graph.search;
  */
 public class SearchResult {
     public static enum SearchDirection { left, right };
-    
+
     private String kmer;
     private String nuclSeq;
     private String protSeq;
@@ -32,8 +34,9 @@ public class SearchResult {
     private SearchDirection searchDirection;
     private int mpos;
     private String alignSeq;
+    private SearchTarget start;
 
-    public SearchResult(String kmer, String nuclSeq, String alignSeq, String protSeq, SearchDirection dir, int mpos, double nats, double bits, long time) {
+    public SearchResult(SearchTarget start, String kmer, String nuclSeq, String alignSeq, String protSeq, SearchDirection dir, int mpos, double nats, double bits, long time) {
         this.bits = bits;
         this.nats = nats;
         this.time = time;
@@ -44,6 +47,11 @@ public class SearchResult {
         this.protSeq = protSeq;
         this.searchDirection = dir;
         this.alignSeq = alignSeq;
+        this.start = start;
+    }
+
+    public SearchTarget getStart() {
+        return start;
     }
 
     public String getKmer() {

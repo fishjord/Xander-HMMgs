@@ -14,28 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.msu.cme.rdp.graph.cli;
+package edu.msu.cme.rdp.graph.visual;
 
 import edu.msu.cme.rdp.alignment.hmm.HMMER3bParser;
 import edu.msu.cme.rdp.alignment.hmm.ProfileHMM;
+import edu.msu.cme.rdp.graph.cli.HMMBloomSearch;
 import edu.msu.cme.rdp.graph.filter.BloomFilter;
+import edu.msu.cme.rdp.graph.search.AStarNode;
 import edu.msu.cme.rdp.graph.search.HMMGraphSearch;
 import edu.msu.cme.rdp.graph.search.HMMGraphSearch.HackTerminateException;
-import edu.msu.cme.rdp.graph.search.SearchResult;
 import edu.msu.cme.rdp.graph.search.SearchTarget;
+import edu.msu.cme.rdp.kmer.io.KmerStart;
+import edu.msu.cme.rdp.kmer.io.KmerStartsReader;
 import edu.msu.cme.rdp.readseq.SequenceType;
-import edu.msu.cme.rdp.readseq.writers.FastaWriter;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,9 +48,9 @@ import java.util.concurrent.TimeoutException;
  *
  * @author fishjord
  */
-public class TimeLimitedSearchMT {
+public class GraphSearch {
 
-    private static class TimeLimitedSearchThread implements Callable<List<SearchResult>> {
+    private static class TimeLimitedSearchThread implements Callable<List<AStarNode>> {
 
         private HMMGraphSearch searchMethod;
         private SearchTarget target;
@@ -59,21 +60,21 @@ public class TimeLimitedSearchMT {
             this.target = target;
         }
 
-        public List<SearchResult> call() throws Exception {
+        public List<AStarNode> call() throws Exception {
             try {
-                return searchMethod.search(target);
+                return searchMethod.searchGraph(target);
             } catch (HackTerminateException e) {
                 return null;
             }
         }
     }
 
-    private static class TimeStamppedFutureTask extends FutureTask<List<SearchResult>> {
+    private static class TimeStamppedFutureTask extends FutureTask<List<AStarNode>> {
 
         private long startedAt = -1;
         private String startingWord;
 
-        public TimeStamppedFutureTask(Runnable runnable, List<SearchResult> result) {
+        public TimeStamppedFutureTask(Runnable runnable, List<AStarNode> result) {
             super(runnable, result);
         }
 
@@ -124,31 +125,19 @@ public class TimeLimitedSearchMT {
         File revHMMFile = new File(args[4]);
         File kmersFile = new File(args[5]);
 
-        File nuclOutFile = new File(kmersFile.getName() + "_nucl.fasta");
-        File alignOutFile = new File(kmersFile.getName() + ".alignment");
-        File protOutFile = new File(kmersFile.getName() + "_prot.fasta");
+        File graphOutStem = new File(kmersFile.getName() + "_graph_");
 
         HMMGraphSearch search = new HMMGraphSearch(k);
 
         ProfileHMM forHMM = HMMER3bParser.readModel(forHMMFile);
         ProfileHMM revHMM = HMMER3bParser.readModel(revHMMFile);
-        FastaWriter nuclOut = new FastaWriter(nuclOutFile);
-        FastaWriter alignOut = new FastaWriter(alignOutFile);
-        FastaWriter protOut = null;
         boolean isProt = forHMM.getAlphabet() == SequenceType.Protein;
-
-        if (isProt) {
-            protOut = new FastaWriter(protOutFile);
-        }
 
         int threads = Runtime.getRuntime().availableProcessors();
 
         if (args.length == 7) {
             threads = Integer.valueOf(args[6]);
         }
-
-        String line;
-        BufferedReader reader = new BufferedReader(new FileReader(kmersFile));
 
         int kmerCount = 0;
         int contigCount = 1;
@@ -169,8 +158,7 @@ public class TimeLimitedSearchMT {
         System.err.println("*  Reverse hmm file:        " + revHMMFile);
         System.err.println("*  Searching prot?:         " + isProt);
         System.err.println("*  # paths:                 " + k);
-        System.err.println("*  Nucl contigs out file    " + nuclOutFile);
-        System.err.println("*  Prot contigs out file    " + protOutFile);
+        System.err.println("*  Graph out stem:          " + graphOutStem);
 
 
         ExecutorService executor = Executors.newFixedThreadPool(threads);
@@ -179,62 +167,32 @@ public class TimeLimitedSearchMT {
         HMMBloomSearch.printHeader(System.out, isProt);
 
         List<TimeStamppedFutureTask> tasks = new ArrayList();
-        Set<String> processed = new HashSet();
-        String key;
+
+        KmerStart line;
+        KmerStartsReader reader = new KmerStartsReader(kmersFile);
 
         try {
-            while ((line = reader.readLine()) != null) {
-                String[] lexemes = line.split("\\s+");
-
-                int startingFrame = -1;
-                String startingWord = null;
-                int count = 0;
-                int startingState = -1;
-                char[] kmer = null;
-
-                if (isProt) {
-                    if (lexemes.length != 7) {
-                        System.err.println("Skipping line " + line + " (not the right number of lexemes " + lexemes.length + ")");
-                        continue;
-                    }
-
-                    //startingFrame = Integer.valueOf(lexemes[4]);
-                    startingWord = lexemes[1].toLowerCase();
-                    //count = Integer.valueOf(lexemes[5]);
-                    startingState = Integer.valueOf(lexemes[6]);
-
-                    kmer = startingWord.toCharArray();
-                } else {
-                    if (lexemes.length != 6) {
-                        System.err.println("Skipping line " + line + " (not the right number of lexemes " + lexemes.length + ")");
-                        continue;
-                    }
-
-                    startingWord = lexemes[1].toLowerCase();
-                    //count = Integer.valueOf(lexemes[4]);
-                    startingState = Integer.valueOf(lexemes[5]);
-
-                    kmer = startingWord.toCharArray();
-                }
-
-                key = startingWord + startingState;
-                if(processed.contains(key)) {
-                    continue;
-                }
-                processed.add(key);
+            while ((line = reader.readNext()) != null) {
 
                 kmerCount++;
 
-                if (startingState == 0) {
+                if (line.getMpos() == 0) {
                     System.err.println("Skipping line " + line);
                     continue;
                 }
 
-                TimeStamppedFutureTask future = new TimeStamppedFutureTask(new TimeLimitedSearchThread(search, new SearchTarget(startingWord, 0, startingState, forHMM, revHMM, bloom)));
+                TimeStamppedFutureTask future = new TimeStamppedFutureTask(
+                        new TimeLimitedSearchThread(search,
+                        new SearchTarget(line.getGeneName(),
+                        line.getQueryId(), line.getRefId(), line.getKmer(), 0,
+                        line.getMpos(), forHMM, revHMM, bloom)));
+
                 executor.execute(future);
                 tasks.add(future);
             }
 
+            Graph graph = new Graph();
+            int searches = 0;
             for (TimeStamppedFutureTask future : tasks) {
                 try {
 
@@ -250,31 +208,27 @@ public class TimeLimitedSearchMT {
                         throw new TimeoutException();
                     }
 
-                    List<SearchResult> searchResults = future.get(delta, TimeUnit.MILLISECONDS);
+                    List<AStarNode> searchResults = future.get(delta, TimeUnit.MILLISECONDS);
 
-                    for (SearchResult result : searchResults) {
-                        String seqid = "contig_" + (contigCount++);
-
-                        HMMBloomSearch.printResult(seqid, isProt, result, System.out);
-
-                        nuclOut.writeSeq(seqid, result.getNuclSeq());
-                        alignOut.writeSeq(seqid, result.getAlignSeq());
-                        if (isProt) {
-                            protOut.writeSeq(seqid, result.getProtSeq());
-                        }
+                    System.out.println("Search " + ++searches + " / " + tasks.size() + " done");
+                    for (AStarNode result : searchResults) {
+                        graph.connectAll(result);
                     }
                 } catch (TimeoutException e) {
-                    System.out.println("-\t" + future.getStartingWord() + (isProt? "\t-" : "") + "\t-\t-\t-\t-");
+                    System.out.println("Search " + ++searches + " / " + tasks.size() + " canceled");
                     future.cancel(true);
                 } catch (Exception e) {
-                    System.out.println("-\t" + future.getStartingWord() + (isProt? "\t-" : "") + "\t-\t-\t-\t-");
-                    e.printStackTrace();
-                    if(e.getCause() != null) {
-                        e.getCause().printStackTrace();
-                    }
+                    System.out.println("Search " + ++searches + " / " + tasks.size() + " failed: " + e.getMessage());
                     future.cancel(true);
                 }
             }
+
+            System.out.println("Graph searching done, writing graph");
+            graph.writeDot(graphOutStem);
+
+	    ObjectOutputStream ps = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(kmersFile.getName() + "_graph.ser")));
+	    ps.writeObject(graph);
+	    ps.close();
 
             executor.shutdown();
             System.err.println("Awaiting thread temination");
@@ -282,10 +236,6 @@ public class TimeLimitedSearchMT {
 
             System.err.println("Read in " + kmerCount + " kmers and created " + contigCount + " contigs in " + (System.currentTimeMillis() - startTime) / 1000f + " seconds");
         } finally {
-            nuclOut.close();
-            if (isProt) {
-                protOut.close();
-            }
             System.out.close();
         }
 

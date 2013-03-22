@@ -74,7 +74,7 @@ public abstract class SearchMethod {
                 scorer.consume(c);
             }
 
-            ret.add(new SearchResult(target.getKmer(), nuclSeq, alignment, protSeq, SearchDirection.left, target.getReverseHmm().M() - target.getStartState(), r.maxScore, scorer.getMaxScore(), leftTime));
+            ret.add(new SearchResult(target, target.getKmer(), nuclSeq, alignment, protSeq, SearchDirection.left, target.getReverseHmm().M() - target.getStartState(), r.maxScore, scorer.getMaxScore(), leftTime));
         }
 
         long rightTime = System.currentTimeMillis();
@@ -97,7 +97,7 @@ public abstract class SearchMethod {
                 scorer.consume(c);
             }
 
-            ret.add(new SearchResult(target.getKmer(), nuclSeq, alignment, protSeq, SearchDirection.right, target.getStartState(), r.maxScore, scorer.getMaxScore(), rightTime));
+            ret.add(new SearchResult(target, target.getKmer(), nuclSeq, alignment, protSeq, SearchDirection.right, target.getStartState(), r.maxScore, scorer.getMaxScore(), rightTime));
         }
 
         return ret;

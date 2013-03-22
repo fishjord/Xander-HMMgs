@@ -11,7 +11,7 @@ starts = set()
 for line in open(sys.argv[1]):
     lexemes = line.strip().split("\t")
     model_pos = lexemes[-1]
-    kmer = lexemes[1]
+    kmer = lexemes[3]
 
     key = kmer + "_" + model_pos
 

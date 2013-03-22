@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.msu.cme.rdp.graph.cli;
+package edu.msu.cme.rdp.graph.utils;
 
 import edu.msu.cme.rdp.alignment.hmm.HMMER3bParser;
 import edu.msu.cme.rdp.alignment.hmm.ProfileHMM;
@@ -60,6 +60,38 @@ public class ContigMerger {
         public int compareTo(MergedContig o) {
             return Double.compare(o.score, score);
         }
+    }
+
+    private static List<MergedContig> mergeAllContigs(Map<String, Sequence> leftContigs, Map<String, Sequence> rightContigs, String kmer, ProfileHMM hmm) {
+        List<MergedContig> ret = new ArrayList();
+        int k = kmer.length();
+
+        for (Sequence leftContig : leftContigs.values()) {
+            String leftSeq = leftContig.getSeqString();
+            leftSeq = leftSeq.substring(0, leftSeq.length() - k);
+
+            for (Sequence rightContig : rightContigs.values()) {
+                String seq = leftSeq + rightContig.getSeqString();
+
+                MergedContig mergedContig = new MergedContig();
+                if (hmm.getAlphabet() == SequenceType.Protein) {
+                    mergedContig.nuclSeq = seq;
+                    seq = mergedContig.protSeq = ProteinUtils.getInstance().translateToProtein(seq, true, 11);
+                } else if (hmm.getAlphabet() == SequenceType.Nucleotide) {
+                    mergedContig.nuclSeq = seq;
+                } else {
+                    throw new IllegalStateException("Cannot handle hmm alpha " + hmm.getAlphabet());
+                }
+                mergedContig.score = ForwardScorer.scoreSequence(hmm, seq);
+                mergedContig.leftContig = leftContig.getSeqName();
+                mergedContig.rightContig = rightContig.getSeqName();
+                mergedContig.length = seq.length();
+
+                ret.add(mergedContig);
+            }
+        }
+
+        return ret;
     }
 
     private static List<MergedContig> mergeContigs(Map<String, Sequence> leftContigs, Map<String, Sequence> rightContigs, String kmer, ProfileHMM hmm) {
@@ -128,7 +160,9 @@ public class ContigMerger {
         final FastaWriter protSeqOut;
         final FastaWriter nuclSeqOut;
         final boolean prot;
+        final boolean all;
 
+        options.addOption("a", "all", false, "Generate all combinations for multiple paths, instead of just the best");
         options.addOption("b", "min-bits", true, "Minimum bits score");
         options.addOption("l", "min-length", true, "Minimum length");
         options.addOption("o", "out", true, "Write output to file instead of stdout");
@@ -153,6 +187,8 @@ public class ContigMerger {
             } else {
                 out = System.err;
             }
+
+            all = line.hasOption("all");
 
             args = line.getArgs();
 
@@ -190,7 +226,7 @@ public class ContigMerger {
         Map<String, Sequence> leftContigs = new HashMap();
         Map<String, Sequence> rightContigs = new HashMap();
 
-        int mergedContigs = 0;
+        int contigsMerged = 0;
         int writtenMerges = 0;
         long startTime = System.currentTimeMillis();
         String kmer = null;
@@ -222,10 +258,18 @@ public class ContigMerger {
 
             if (dir != lastDir) {
                 if (dir == SearchDirection.left) {
-                    for (MergedContig mc : mergeContigs(leftContigs, rightContigs, kmer, hmm)) {
+                    List<MergedContig> mergedContigs;
+
+                    if (all) {
+                        mergedContigs = mergeAllContigs(leftContigs, rightContigs, kmer, hmm);
+                    } else {
+                        mergedContigs = mergeContigs(leftContigs, rightContigs, kmer, hmm);
+                    }
+                    contigsMerged++;
+
+                    for (MergedContig mc : mergedContigs) {
                         String mergedId = mc.leftContig + "_" + mc.rightContig;
                         out.println(mergedId + "\t" + mc.length + "\t" + mc.score);
-                        mergedContigs++;
 
                         if (mc.score > minBits && mc.length > minProtLength) {
                             if (prot) {
@@ -258,7 +302,7 @@ public class ContigMerger {
             for (MergedContig mc : mergeContigs(leftContigs, rightContigs, kmer, hmm)) {
                 String mergedId = mc.leftContig + "_" + mc.rightContig;
                 out.println(mergedId + "\t" + mc.length + "\t" + mc.score);
-                mergedContigs++;
+                contigsMerged++;
 
                 if (mc.score > minBits && mc.length > minProtLength) {
                     if (prot) {
@@ -276,6 +320,6 @@ public class ContigMerger {
         }
         nuclSeqOut.close();
 
-        System.err.println("Read in " + mergedContigs + " contigs, wrote out " + writtenMerges + " merged contigs in " + ((double) (System.currentTimeMillis() - startTime) / 1000) + "s");
+        System.err.println("Read in " + contigsMerged + " contigs, wrote out " + writtenMerges + " merged contigs in " + ((double) (System.currentTimeMillis() - startTime) / 1000) + "s");
     }
 }

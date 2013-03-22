@@ -23,24 +23,20 @@ import edu.msu.cme.rdp.graph.filter.BloomFilter;
 import edu.msu.cme.rdp.graph.search.AStarNode;
 import edu.msu.cme.rdp.graph.search.HMMGraphSearch;
 import edu.msu.cme.rdp.graph.search.HMMGraphSearch.HackTerminateException;
-import edu.msu.cme.rdp.graph.search.SearchResult;
 import edu.msu.cme.rdp.graph.search.SearchTarget;
+import edu.msu.cme.rdp.kmer.io.KmerStart;
+import edu.msu.cme.rdp.kmer.io.KmerStartsReader;
 import edu.msu.cme.rdp.readseq.SequenceType;
-import edu.msu.cme.rdp.readseq.writers.FastaWriter;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -143,9 +139,6 @@ public class GraphSearch {
             threads = Integer.valueOf(args[6]);
         }
 
-        String line;
-        BufferedReader reader = new BufferedReader(new FileReader(kmersFile));
-
         int kmerCount = 0;
         int contigCount = 1;
 
@@ -174,58 +167,26 @@ public class GraphSearch {
         HMMBloomSearch.printHeader(System.out, isProt);
 
         List<TimeStamppedFutureTask> tasks = new ArrayList();
-        Set<String> processed = new HashSet();
-        String key;
+
+        KmerStart line;
+        KmerStartsReader reader = new KmerStartsReader(kmersFile);
 
         try {
-            while ((line = reader.readLine()) != null) {
-                String[] lexemes = line.split("\\s+");
-
-                int startingFrame = -1;
-                String startingWord = null;
-                int count = 0;
-                int startingState = -1;
-                char[] kmer = null;
-
-                if (isProt) {
-                    if (lexemes.length != 7) {
-                        System.err.println("Skipping line " + line + " (not the right number of lexemes " + lexemes.length + ")");
-                        continue;
-                    }
-
-                    //startingFrame = Integer.valueOf(lexemes[4]);
-                    startingWord = lexemes[1].toLowerCase();
-                    //count = Integer.valueOf(lexemes[5]);
-                    startingState = Integer.valueOf(lexemes[6]);
-
-                    kmer = startingWord.toCharArray();
-                } else {
-                    if (lexemes.length != 6) {
-                        System.err.println("Skipping line " + line + " (not the right number of lexemes " + lexemes.length + ")");
-                        continue;
-                    }
-
-                    startingWord = lexemes[1].toLowerCase();
-                    count = Integer.valueOf(lexemes[4]);
-                    startingState = Integer.valueOf(lexemes[5]);
-
-                    kmer = startingWord.toCharArray();
-                }
-
-                key = startingWord + startingState;
-                if(processed.contains(key)) {
-                    continue;
-                }
-                processed.add(key);
+            while ((line = reader.readNext()) != null) {
 
                 kmerCount++;
 
-                if (startingState == 0) {
+                if (line.getMpos() == 0) {
                     System.err.println("Skipping line " + line);
                     continue;
                 }
 
-                TimeStamppedFutureTask future = new TimeStamppedFutureTask(new TimeLimitedSearchThread(search, new SearchTarget(startingWord, 0, startingState, forHMM, revHMM, bloom)));
+                TimeStamppedFutureTask future = new TimeStamppedFutureTask(
+                        new TimeLimitedSearchThread(search,
+                        new SearchTarget(line.getGeneName(),
+                        line.getQueryId(), line.getRefId(), line.getKmer(), 0,
+                        line.getMpos(), forHMM, revHMM, bloom)));
+                
                 executor.execute(future);
                 tasks.add(future);
             }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package edu.msu.cme.rdp.graph.cli;
+package edu.msu.cme.rdp.graph.utils;
 
 import edu.msu.cme.rdp.alignment.hmm.jni.HMMER3;
 import edu.msu.cme.rdp.alignment.hmm.jni.HMMER3Hit;
