@@ -34,7 +34,7 @@ public class HMMBloomSearch {
     }
 
     public static void printHeader(PrintStream out, boolean protSearch) {
-        out.println("#contig_id\tstarting kmer\tstarting state\tnucl length" + (protSearch ? "\tprot length" : "") + "\tsearch direction\tnats\tbits\ttime (s)");
+        out.println("#contig_id\tgene_name\tquery_id\trefseq_id\tstarting kmer\tstarting state\tnucl length" + (protSearch ? "\tprot length" : "") + "\tsearch direction\tnats\tbits\ttime (s)");
     }
 
     public static void printResult(String seqid, SearchResult result, PrintStream out) {
@@ -44,12 +44,15 @@ public class HMMBloomSearch {
     public static void printResult(String seqid, boolean protSearch, SearchResult result, PrintStream out) {
         System.out.println(
                 seqid + "\t"
+                + result.getStart().getGeneName() + "\t"
+                + result.getStart().getQuerySeqid() + "\t"
+                + result.getStart().getRefSeqid() + "\t"
                 + result.getKmer() + "\t"
 		+ result.getModelPosition() + "\t"
                 + result.getNuclSeq().length() + "\t"
                 + (protSearch ? result.getProtSeq().length() + "\t" : "")
                 + result.getSearchDirection() + "\t"
-                + threeDig.format(result.getNats()) + "\t"
+                + ((Double.isInfinite(result.getNats()) || Double.isNaN(result.getNats()))? "?" : threeDig.format(result.getNats())) + "\t"
                 + format.format(result.getBits()) + "\t"
                 + threeDig.format(result.getTime()  / 1000.0f));
     }

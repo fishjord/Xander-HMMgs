@@ -35,8 +35,9 @@ public class SearchTarget {
     private ProfileHMM reverseHmm;
     private BloomFilter filter;
     private boolean prot;
+    private String geneName, querySeqid, refSeqid;
 
-    public SearchTarget(String kmer, int frame, int startState, ProfileHMM forwardHmm, ProfileHMM reverseHmm, BloomFilter filter) {
+    public SearchTarget(String geneName, String querySeqid, String refSeqid, String kmer, int frame, int startState, ProfileHMM forwardHmm, ProfileHMM reverseHmm, BloomFilter filter) {
         this.kmer = kmer;
         this.frame = frame;
         this.startState = startState;
@@ -44,6 +45,21 @@ public class SearchTarget {
         this.reverseHmm = reverseHmm;
         this.filter = filter;
         this.prot = forwardHmm.getAlphabet() == SequenceType.Protein;
+        this.geneName = geneName;
+        this.querySeqid = querySeqid;
+        this.refSeqid = refSeqid;
+    }
+
+    public String getGeneName() {
+        return geneName;
+    }
+
+    public String getQuerySeqid() {
+        return querySeqid;
+    }
+
+    public String getRefSeqid() {
+        return refSeqid;
     }
 
     public int getFrame() {

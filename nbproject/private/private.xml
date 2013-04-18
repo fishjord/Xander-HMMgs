@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/hash/Hash.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/hash/CyclicHash.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/filter/BloomFilter.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/filter/PathHolder.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/search/AStarNode.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/Graph.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/GraphSearch.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/test/edu/msu/cme/rdp/graph/filter/PathHolderTest.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/test/edu/msu/cme/rdp/graph/filter/SearchTest.java</file>
+        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/search/HMMGraphSearch.java</file>
         <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/search/NodeEnumerator.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/test/edu/msu/cme/rdp/graph/search/NodeEnumeratorTest.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/test/edu/msu/cme/rdp/graph/search/AStarSearchNodeTest.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/test/edu/msu/cme/rdp/graph/filter/NextCodonTest.java</file>
+        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/search/AStarNode.java</file>
     </open-files>
 </project-private>

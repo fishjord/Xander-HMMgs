@@ -16,6 +16,7 @@
  */
 package edu.msu.cme.rdp.graph.cli;
 
+import edu.msu.cme.rdp.graph.utils.BloomFilterStats;
 import edu.msu.cme.rdp.graph.filter.BloomFilter;
 import edu.msu.cme.rdp.readseq.SequenceFormat;
 import edu.msu.cme.rdp.readseq.readers.Sequence;

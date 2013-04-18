@@ -433,6 +433,13 @@ public class BloomFilter implements Serializable {
         //protected StringBuilder path = new StringBuilder();
         public int framePtr = -1;      // index of the end of last codon
         private static final byte startChar = Kmer.a;
+        /*
+         * The PathHolder imposes a constraint on how the path is represented
+         * The 'left most' character in a path (ie path[0]) is always the earliest
+         * one pushed on, and the right most is the most recent pushed on.
+         *
+         * This is used to simplify bitwise operations (shift the kmer, | the new emission)
+         */
         protected PathHolder path = new PathHolder();
         protected int pathPtr = -1;
 
@@ -731,6 +738,9 @@ public class BloomFilter implements Serializable {
 
     /**
      * a class to get codons from the right side of the starting kmer
+     * To comply with the constraints set by the PathHolder we store the
+     * left search path in reverse order.  This has several implications, including
+     * that codons are stored in reverse order
      */
     public final class LeftCodonFacade extends CodonFacade {
 
@@ -746,6 +756,10 @@ public class BloomFilter implements Serializable {
             fwdHashValue = 0;
             rcHashValue = 0;
 
+            /*
+             * Be cause we're storing the path in reverse order we need to
+             * load the initial kmer in the reverse order
+             */
             for (int i = kmerSize - 1; i >= 0; i--) {
                 byte c = Kmer.validateLookup[s[i]];
                 if (c == -1) {
@@ -780,23 +794,20 @@ public class BloomFilter implements Serializable {
                 return null;
             }
             framePtr = pathPtr;
-            // Probably need to spped this up.
 
             int i = path.size();
+            //Yes, we're using the last three from the kmer, an it does look
+            //like this is the wrong order, but NextCodon needs them in the
+            //'Graph walk order', the first argument tells the constructor
+            //that it needs to reverse the codon when translating to protein
             return new NextCodon(false, path.get(i - 3), path.get(i - 2), path.get(i - 1));
-            //return new NextCodon(path.get(i - 1), path.get(i - 2), path.get(i - 3));
         }
 
-        /**
-         *
-         * @return the path starting from the char right after the original
-         * kmer, all the way to the current char pointed by pathPtr
-         */
         @Override
         public String getPathString() {
-            //return path.toString();
-            StringBuilder tmp = new StringBuilder(super.getPathString());
-            return tmp.reverse().toString();
+            //Since we're storing the left side path in reverese order, reverse
+            //it before we return it
+            return new StringBuilder(super.getPathString()).reverse().toString();
         }
     }
 }

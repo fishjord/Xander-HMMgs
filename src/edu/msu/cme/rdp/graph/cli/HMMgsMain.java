@@ -16,6 +16,9 @@
  */
 package edu.msu.cme.rdp.graph.cli;
 
+import edu.msu.cme.rdp.graph.utils.BloomFilterAppender;
+import edu.msu.cme.rdp.graph.utils.ContigMerger;
+import edu.msu.cme.rdp.graph.utils.BloomFilterStats;
 import java.util.Arrays;
 
 /**
