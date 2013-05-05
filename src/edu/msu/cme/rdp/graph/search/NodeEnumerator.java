@@ -99,13 +99,13 @@ public class NodeEnumerator {
                 }
 
                 int codon = protEmission.getCodon() & 127;
-                byte b1 = (byte)(codon & 0x3);
-                byte b2 = (byte)(codon >> 2 & 0x3);
-                byte b3 = (byte)(codon >> 4 & 0x3);
+                byte b1 = (byte) (codon & 0x3);
+                byte b2 = (byte) (codon >> 2 & 0x3);
+                byte b3 = (byte) (codon >> 4 & 0x3);
                 nextKmer = curr.kmer.shiftLeft(b3).shiftLeft(b2).shiftLeft(b1);
                 emission = protEmission.getAminoAcid();
             } else {
-                nextKmer = curr.kmer.shiftLeft((byte)(nextNucl & 3));
+                nextKmer = curr.kmer.shiftLeft((byte) (nextNucl & 3));
                 emission = Kmer.intToChar[nextNucl];
             }
 
@@ -122,11 +122,14 @@ public class NodeEnumerator {
             newKmer = !seenKmers.contains(nextKmer);
             next = new AStarNode(curr, nextKmer, fwdHash, rcHash, nextState, 'm');
 
+            next.realScore = curr.realScore + matchTrans + hmm.msc(nextState, emission);
+            next.emission = emission;
             next.thisNodeScore = matchTrans + hmm.msc(nextState, emission) - maxMatchEmission;
+            next.length = curr.length + 1;
             next.score = (curr.score + next.thisNodeScore);
             next.fval = (int) (HMMGraphSearch.INT_SCALE * (next.score + hweight * hcost.computeHeuristicCost('m', nextState)));
             next.hasNewKmer = curr.hasNewKmer || newKmer;
-	    next.indels = curr.indels;
+            next.indels = curr.indels;
 
             ret.add(next);
 
@@ -141,11 +144,14 @@ public class NodeEnumerator {
                 next = new AStarNode(curr, nextKmer, fwdHash, rcHash, curr.stateNo /*
                          * Inserts don't advance the state
                          */, 'i');
+                next.realScore = curr.realScore + insTrans + hmm.isc(nextState, emission);
+                next.emission = emission;
                 next.thisNodeScore = insTrans + hmm.isc(nextState, emission);
+                next.length = curr.length + 1;
                 next.score = (curr.score + next.thisNodeScore);
                 next.fval = (int) (HMMGraphSearch.INT_SCALE * (next.score + hweight * hcost.computeHeuristicCost('i', curr.stateNo)));
                 next.hasNewKmer = curr.hasNewKmer || newKmer;
-		next.indels = curr.indels + 1;
+                next.indels = curr.indels + 1;
 
                 ret.add(next);
             }
@@ -167,11 +173,14 @@ public class NodeEnumerator {
         if (curr.state != 'i') {
             next = new AStarNode(curr, curr.kmer, curr.fwdHash, curr.rcHash, nextState, 'd');
 
+            next.realScore = curr.realScore + delTrans;
+            next.emission = '-';
             next.thisNodeScore = delTrans - maxMatchEmission;
+            next.length = curr.length;
             next.score = (curr.score + next.thisNodeScore);
             next.fval = (int) (HMMGraphSearch.INT_SCALE * (next.score + hweight * hcost.computeHeuristicCost('d', nextState)));
             next.hasNewKmer = curr.hasNewKmer;
-	    next.indels = curr.indels + 1;
+            next.indels = curr.indels + 1;
 
             ret.add(next);
         }

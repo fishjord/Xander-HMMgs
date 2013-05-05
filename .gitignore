@@ -1,7 +1,6 @@
 .svn
-.class
+*.class
 build
 dist
 hmmgs/
-publication
 *~

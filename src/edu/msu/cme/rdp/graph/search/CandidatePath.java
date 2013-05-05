@@ -39,7 +39,12 @@ public class CandidatePath implements Serializable, Comparable<CandidatePath> {
 
     public CandidatePath(AStarNode goal, Set<Kmer> seenKmers) {
         //score = (int) (goal.score * AStar.INT_SCALE);
-        score = goal.score;
+        if(goal.partial) {
+            score = Double.NEGATIVE_INFINITY;
+        } else {
+            score = goal.score;
+        }
+        
         iscore = (int) (goal.score * HMMGraphSearch.INT_SCALE);
         while (goal != null) {
             path.add(goal);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/abundance/ReadKmerMapper.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/cli/ReadExtractor.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/visual/ExtractGraph.java</file>
-        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/visual/PostProcessContigs.java</file>
+        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/sandbox/NodeCounter.java</file>
+        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/filter/BloomFilter.java</file>
+        <file>file:/local/NetBeansProjects/hmmgs/src/edu/msu/cme/rdp/graph/search/HMMGraphSearch.java</file>
     </open-files>
 </project-private>

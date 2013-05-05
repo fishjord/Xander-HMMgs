@@ -196,7 +196,7 @@ public class TimeLimitedSearch {
                         new TimeLimitedSearchThread(search,
                         new SearchTarget(line.getGeneName(),
                         line.getQueryId(), line.getRefId(), line.getNuclKmer(), 0,
-                        line.getMpos(), forHMM, revHMM, bloom)));
+                        line.getMpos() - 1, forHMM, revHMM, bloom)));
 
                 Thread t = new Thread(future);
                 t.setDaemon(true);

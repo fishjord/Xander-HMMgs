@@ -26,6 +26,7 @@ import java.io.Serializable;
  */
 public class AStarNode implements Serializable, Comparable<AStarNode> {
 
+    public boolean partial = true;
     public AStarNode discoveredFrom;
     public final Kmer kmer;
     public final long fwdHash, rcHash;
@@ -36,6 +37,9 @@ public class AStarNode implements Serializable, Comparable<AStarNode> {
     public boolean hasNewKmer;
     public double thisNodeScore;
     public int indels;
+    public double realScore;
+    public int length;
+    public char emission;
 
     public AStarNode(AStarNode discoveredFrom, Kmer kmer, long fwdHash, long rcHash, int stateNo, char state) {
         this.discoveredFrom = discoveredFrom;
