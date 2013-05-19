@@ -1,19 +1,22 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/MacPorts 2012_5) (format=latex 2013.2.26)  6 MAR 2013 16:56
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.4.21)  19 MAY 2013 18:16
 entering extended mode
- restricted \write18 enabled.
  %&-line parsing enabled.
 **xander_bmc_article.tex
 (./xander_bmc_article.tex
-LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, cz
-ech, slovak, dutch, ukenglish, usenglishmax, basque, french, german-x-2012-05-3
-0, ngerman-x-2012-05-30, german, ngerman, swissgerman, italian, polish, portugu
-ese, spanish, catalan, galician, loaded.
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, farsi, arabic, croatian, bulgarian, ukrainian, russian, czech, slov
+ak, danish, dutch, finnish, french, basque, ngerman, german, german-x-2009-06-1
+9, ngerman-x-2009-06-19, ibycus, monogreek, greek, ancientgreek, hungarian, san
+skrit, italian, latin, latvian, lithuanian, mongolian2a, mongolian, bokmal, nyn
+orsk, romanian, irish, coptic, serbian, turkish, welsh, esperanto, uppersorbian
+, estonian, indonesian, interlingua, icelandic, kurmanji, slovenian, polish, po
+rtuguese, spanish, galician, catalan, swedish, ukenglish, pinyin, loaded.
 (./bmc_article.cls
 Document Class: bmc_article 2003/09/01 v1.01 BioMed Central article class
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/article.cls
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/size10.clo
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo
 File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -31,20 +34,20 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \c@bmc@correspondingauthor=\count87
 \c@bmc@emailcounter=\count88
 )
-(/opt/local/share/texmf-texlive-dist/tex/latex/cite/cite.sty
-LaTeX Info: Redefining \cite on input line 302.
-LaTeX Info: Redefining \nocite on input line 373.
-Package: cite 2010/09/10  v 5.3
+(/usr/share/texmf-texlive/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 285.
+LaTeX Info: Redefining \nocite on input line 356.
+Package: cite 2009/08/29  v 5.2
 )
-(/opt/local/share/texmf-texlive-dist/tex/latex/url/url.sty
+(/usr/share/texmf-texlive/tex/latex/ltxmisc/url.sty
 \Urlmuskip=\muskip10
 Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
 )
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/ifthen.sty
+(/usr/share/texmf-texlive/tex/latex/base/ifthen.sty
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
-(/opt/local/share/texmf-texlive-dist/tex/latex/tools/multicol.sty
-Package: multicol 2011/06/27 v1.7a multicolumn formatting (FMi)
+(/usr/share/texmf-texlive/tex/latex/tools/multicol.sty
+Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 \c@tracingmulticols=\count89
 \mult@box=\box26
 \multicol@leftmargin=\dimen103
@@ -89,21 +92,20 @@ Package: multicol 2011/06/27 v1.7a multicolumn formatting (FMi)
 \multicolundershoot=\dimen110
 \mult@nat@firstbox=\box50
 \colbreak@box=\box51
-\multicol@sort@counter=\count97
 )
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/inputenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
 Package: inputenc 2008/03/30 v1.1d Input encoding file
 \inpenc@prehook=\toks14
 \inpenc@posthook=\toks15
 
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/utf8.def
+(/usr/share/texmf-texlive/tex/latex/base/utf8.def
 File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OML ...
 ... no UTF-8 mapping file for font encoding OML
 Now handling font encoding T1 ...
 ... processing UTF-8 mapping file for font encoding T1
 
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/t1enc.dfu
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.dfu
 File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -253,7 +255,7 @@ File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OT1 ...
 ... processing UTF-8 mapping file for font encoding OT1
 
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/ot1enc.dfu
+(/usr/share/texmf-texlive/tex/latex/base/ot1enc.dfu
 File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A1 (decimal 161)
    defining Unicode char U+00A3 (decimal 163)
@@ -284,7 +286,7 @@ File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
 Now handling font encoding OMS ...
 ... processing UTF-8 mapping file for font encoding OMS
 
-(/opt/local/share/texmf-texlive-dist/tex/latex/base/omsenc.dfu
+(/usr/share/texmf-texlive/tex/latex/base/omsenc.dfu
 File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
    defining Unicode char U+00A7 (decimal 167)
    defining Unicode char U+00B6 (decimal 182)
@@ -308,26 +310,27 @@ Now handling font encoding U ...
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
 ))
-(/opt/local/share/texmf-texlive-dist/tex/latex/graphics/graphicx.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/opt/local/share/texmf-texlive-dist/tex/latex/graphics/keyval.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks16
 )
-(/opt/local/share/texmf-texlive-dist/tex/latex/graphics/graphics.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/opt/local/share/texmf-texlive-dist/tex/latex/graphics/trig.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/opt/local/share/texmf-texlive-dist/tex/latex/latexconfig/graphics.cfg
-File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+(/etc/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
 )
-Package graphics Info: Driver file: dvips.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(/opt/local/share/texmf-texlive-dist/tex/latex/graphics/dvips.def
-File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
+\Gread@gobject=\count97
 ))
 \Gin@req@height=\dimen111
 \Gin@req@width=\dimen112
@@ -347,6 +350,20 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 110.
 LaTeX Font Info:    ... okay on input line 110.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 110.
 LaTeX Font Info:    ... okay on input line 110.
+
+(/usr/share/texmf-texlive/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count98
+\scratchdimen=\dimen113
+\scratchbox=\box52
+\nofMPsegments=\count99
+\nofMParguments=\count100
+\everyMPshowfont=\toks17
+\MPscratchCnt=\count101
+\MPscratchDim=\dimen114
+\MPnumerator=\count102
+\everyMPtoPDFconversion=\toks18
+)
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 161.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -364,48 +381,70 @@ Overfull \hbox (9.99998pt too wide) in paragraph at lines 161--161
 
 [1
 
-] [2]
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5]
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available
-(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 249.
+(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 295.
 
 
-[3] [4] [5] [6] [7] (./xander_bmc_article.bbl
+[6] (./xander_bmc_article.bbl
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 13.
+(Font)              <9> on input line 14.
 )
-File: combined_graph.eps Graphic file (type eps)
- <combined_graph.eps>
-File: jaccard/paper_jaccard.eps Graphic file (type eps)
+<hmp_mock_community_mapping_chart.png, id=40, 577.1964pt x 562.7424pt>
+File: hmp_mock_community_mapping_chart.png Graphic file (type png)
 
-<jaccard/paper_jaccard.eps> [8] [9]
-Underfull \hbox (badness 10000) in paragraph at lines 418--418
-[]\OT1/cmr/m/n/10 Unique
+<use hmp_mock_community_mapping_chart.png> [7]
+<pruning_heuristics.png, id=49, 651.3936pt x 467.346pt>
+File: pruning_heuristics.png Graphic file (type png)
+
+<use pruning_heuristics.png> [8 <./hmp_mock_community_mapping_chart.png>]
+<combined_graph.png, id=54, 722.7pt x 542.025pt>
+File: combined_graph.png Graphic file (type png)
+ <use combined_graph.png>
+[9 <./pruning_heuristics.png> <./combined_graph.png>]
+Overfull \hbox (214.38077pt too wide) in paragraph at lines 430--431
+[][]  
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 418--418
-\OT1/cmr/m/n/10 Start-ing
+[10] [11]
+Overfull \hbox (648.30917pt too wide) in paragraph at lines 460--461
+[][]  
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 418--418
-[]\OT1/cmr/m/n/10 Iowa
- []
-
-
-Overfull \hbox (0.90819pt too wide) in paragraph at lines 418--418
-[]\OT1/cmr/m/n/10 Miscanthus
- []
-
-[10] (./xander_bmc_article.aux) ) 
+[12] (./xander_bmc_article.aux) ) 
 Here is how much of TeX's memory you used:
- 1131 strings out of 494764
- 13651 string characters out of 3171465
- 66431 words of memory out of 3000000
- 4365 multiletter control sequences out of 15000+200000
+ 1504 strings out of 493848
+ 18379 string characters out of 1152823
+ 82847 words of memory out of 3000000
+ 4778 multiletter control sequences out of 15000+50000
  11820 words of font info for 41 fonts, out of 3000000 for 9000
- 134 hyphenation exceptions out of 8191
- 29i,11n,21p,857b,409s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 714 hyphenation exceptions out of 8191
+ 29i,11n,21p,956b,410s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/public/a
+msfonts/cm/cmbx9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
+mex10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
+onts/cm/cmr6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.
+pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/sha
+re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texl
+ive/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-texlive/fonts/t
+ype1/public/amsfonts/cm/cmss12.pfb></usr/share/texmf-texlive/fonts/type1/public
+/amsfonts/cm/cmss8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
+/cmssbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmssi10.
+pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-t
+exlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts
+/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/publi
+c/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
+cm/cmti9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pf
+b>
+Output written on xander_bmc_article.pdf (12 pages, 574059 bytes).
+PDF statistics:
+ 140 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-Output written on xander_bmc_article.dvi (10 pages, 24860 bytes).

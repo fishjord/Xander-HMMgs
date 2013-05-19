@@ -10,7 +10,8 @@ Bloom BH: \textbf{Space/time trade-offs in hash coding with allowable errors}.
 
 \bibitem{Mann2009}
 Mann T: \textbf{Illumina Quality Scores} 2009,
-  \urlprefix\url{[https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B-lLYVUOliJFYjlkNjAwZjgtNDg4ZC00MTIyLTljNjgtMmUzN2M0NTUyNDE3&hl=en_US]}.
+  \urlprefix\url{[https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&%
+srcid=0B-lLYVUOliJFYjlkNjAwZjgtNDg4ZC00MTIyLTljNjgtMmUzN2M0NTUyNDE3&hl=en_US]}.
 
 \bibitem{Hart1968}
 Hart PE, Nilsson NJ, Raphael B: \textbf{A Formal Basis for the Heuristic
@@ -54,7 +55,8 @@ Lawler EL: \textbf{A Procedure for Computing the K Best Solutions to Discrete
     <au><snm>Mann</snm><fnm>T</fnm></au>
   </aug>
   <pubdate>2009</pubdate>
-  <url>https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B-lLYVUOliJFYjlkNjAwZjgtNDg4ZC00MTIyLTljNjgtMmUzN2M0NTUyNDE3&hl=en_US</url>
+  <url>https://docs.google.com/viewer?a=v&pid=explorer&chrome=true&srcid=0B-lL%
+YVUOliJFYjlkNjAwZjgtNDg4ZC00MTIyLTljNjgtMmUzN2M0NTUyNDE3&hl=en_US</url>
 </bibl>
 
 <bibl id="B3">

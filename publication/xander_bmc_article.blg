@@ -1,13 +1,7 @@
-This is BibTeX, Version 0.99d (TeX Live 2012/MacPorts 2012_5)
-Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: xander_bmc_article.aux
 The style file: bmc_article.bst
-Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
-Reallocated global_strs (elt_size=20001) to 20 items from 10.
-Reallocated glb_str_end (elt_size=4) to 20 items from 10.
-Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 472446405560.
 Database file #1: references.bib.bib
 You've used 5 entries,
             3603 wiz_defined-function locations,

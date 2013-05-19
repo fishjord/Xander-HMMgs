@@ -1,4 +1,0 @@
-	corn_merged_aligned	msr1_merged_aligned	prairie_merged_aligned	
-corn_merged_aligned	0.0	1.0	0.9338395	
-msr1_merged_aligned	1.0	0.0	1.0	
-prairie_merged_aligned	0.9338395	1.0	0.0	
