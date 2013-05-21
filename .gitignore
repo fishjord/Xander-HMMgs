@@ -1,6 +1,12 @@
-.svn
+B1;2c.svn
 *.class
 build
 dist
 hmmgs/
 *~
+*.aux
+*.bbl
+*.pdf
+*.dvi
+*.blg
+*.log
