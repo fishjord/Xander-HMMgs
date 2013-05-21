@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.4.21)  19 MAY 2013 18:16
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2013.4.21)  20 MAY 2013 16:07
 entering extended mode
  %&-line parsing enabled.
 **xander_bmc_article.tex
@@ -381,13 +381,17 @@ Overfull \hbox (9.99998pt too wide) in paragraph at lines 161--161
 
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5]
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
 
-LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <10> not available
-(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 295.
+LaTeX Warning: Reference `tab:trimming_stats' on page 3 undefined on input line
+ 244.
 
+[3]
 
-[6] (./xander_bmc_article.bbl
+LaTeX Warning: Reference `fig:comp_pruning_methods' on page 4 undefined on inpu
+t line 252.
+
+[4] [5] [6] (./xander_bmc_article.bbl
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <9> on input line 14.
 )
@@ -403,7 +407,7 @@ File: pruning_heuristics.png Graphic file (type png)
 File: combined_graph.png Graphic file (type png)
  <use combined_graph.png>
 [9 <./pruning_heuristics.png> <./combined_graph.png>]
-Overfull \hbox (214.38077pt too wide) in paragraph at lines 430--431
+Overfull \hbox (214.38077pt too wide) in paragraph at lines 429--430
 [][]  
  []
 
@@ -412,37 +416,40 @@ Overfull \hbox (648.30917pt too wide) in paragraph at lines 460--461
 [][]  
  []
 
-[12] (./xander_bmc_article.aux) ) 
+[12] (./xander_bmc_article.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 1504 strings out of 493848
- 18379 string characters out of 1152823
- 82847 words of memory out of 3000000
- 4778 multiletter control sequences out of 15000+50000
- 11820 words of font info for 41 fonts, out of 3000000 for 9000
+ 1508 strings out of 493848
+ 18509 string characters out of 1152823
+ 82884 words of memory out of 3000000
+ 4783 multiletter control sequences out of 15000+50000
+ 11464 words of font info for 40 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 29i,11n,21p,956b,410s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/a
-msfonts/cm/cmbx9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
-mex10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/t
-exmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texmf-texlive
-/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-texlive/fonts/type1
-/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
-onts/cm/cmr6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.
-pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/sha
-re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texl
-ive/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-texlive/fonts/t
-ype1/public/amsfonts/cm/cmss12.pfb></usr/share/texmf-texlive/fonts/type1/public
-/amsfonts/cm/cmss8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
-/cmssbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmssi10.
-pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/s
-hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-t
-exlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts
-/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/publi
-c/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
-cm/cmti9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pf
-b>
-Output written on xander_bmc_article.pdf (12 pages, 574059 bytes).
+ 29i,11n,21p,968b,412s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
+re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texmf-tex
+live/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/publi
+c/amsfonts/cm/cmmi5.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
+m/cmmi7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi8.pfb>
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/
+texmf-texlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/
+public/amsfonts/cm/cmr8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
+ts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmss10.
+pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texmf-t
+exlive/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fo
+nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/p
+ublic/amsfonts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
+ts/cm/cmsy7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy8.
+pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/share/texmf-t
+exlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on xander_bmc_article.pdf (12 pages, 574191 bytes).
 PDF statistics:
  140 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
