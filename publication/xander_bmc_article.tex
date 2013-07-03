@@ -52,6 +52,7 @@
 \usepackage{multicol}   %Columns
 \usepackage[utf8]{inputenc} %unicode support
 \usepackage{graphicx}
+\usepackage{lscape}
 %\usepackage[applemac]{inputenc} %applemac support if unicode package fails
 %\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
 \urlstyle{rm}
@@ -184,11 +185,9 @@
 \begin{abstract}
         % Do not use inserted blank lines (ie \\) until main body of text.
         \paragraph*{Background:} Metagenomics can provide important insight in to microbial communities.  It can be used to analyze entire genomes and takes full advantage of increasing sequencing capacity. However analyzing large metagenomic datasets has proven to be very computationally challenging with even modest metagenomic datasets requiring hundreads of gigabytes to terabytes of memory to assemble with traditional assembly methods. As dataset sizes continue to increase as sequencing capacity increases new methods will be required for tackling the metagenomic assembly   problem.  In this paper, we present a method for assembling protein coding sequences for one or more genes of interest from a metagenomic dataset. This method uses a compressible graph format and only assembles targeted data to drastically reduce the amount of memory and processing time required.
-        \paragraph*{Results:} Using Xander we were able to assemble 
-
-        \paragraph*{Conclusions:} 
+        \paragraph*{Results:} Using Xander we were able to assemble contigs for two targeted gene families (rplB and nirK) from a defined community sample and a soil rihzosphere metagenomic sample.  From the defined community the assembled contigs matched the expected protein coding sequences.  Using the contigs assembled from the metagenomic sample existing nirK primers were evaluated for coverage on uncultured organisms.
+        \paragraph*{Conclusions:} Gene targeted assembly enables the use gene targeted sequence analysis techniques on metagenomic datasets without requiring whole organism genomes be assembled.  Gene-targeted assembly can also aid in primer development by providing an expanded set of organisms, including uncultured ones, to test primer sensistivity and specificity on.
 \end{abstract}
-
 
 
 \ifthenelse{\boolean{publ}}{\begin{multicols}{2}}{}
@@ -246,15 +245,13 @@ Xander's performance was evaluated using the Human Metabiome Project's (HMP) who
 
 The combined dataset was quality filtered by trimming reads at quality score 2 as recommended by Illumina\cite{Mann2009}, a summary of the trimming results is contained in Table~\ref{tab:trimming_stats}.  A Bloom filter was built from the combined dataset in 8 minutes 41 seconds with an estimated 0.001\% false positive rate.  The Bloom filter was built with a k-mer size of 21 using four hash functions and was one gigabyte in size.
 
-To evaluate the coverage of the HMP mock community dataset the combined read set was mapped to the whole genome sequences for all the organisms using Bowtie2 (cite) summarized in Fig~\ref{fig:bowtie_mapping}.  Two organisms were removed from further analysis: Candida albicans was removed because it did not have a \emph{rplB} annotation and Listeria monocytogenes was removed because only a hand full of reads mapped to it.
+To evaluate the coverage of the HMP mock community dataset the combined read set was mapped to the whole genome sequences for all the organisms using Bowtie2 (cite) summarized in Fig~\ref{fig:bowtie_mapping}.  Two organisms were not targeted for assembly: Candida albicans is a eukaryote and hence does not have a copy of bacterial \emph{rplB} and Listeria monocytogenes since only a hand full of reads mapped to it's \emph{rplB} region.
 
-The starting vertices for Xander's search were selected by first aligning the reference genome's \emph{rplB} sequences to the \emph{rplB} model used for searching.  The protein alignment was then used to align the nucleotide sequences for each reference genome's \emph{rplB} sequence.  The first 21 consecutive nucleotide residues aligned to the rplB model from each reference genome's \emph{rplB} sequence along with the model position the first resiude occupied were used as the search start points.  A total of 20 starting vertices were selected, one from each of the 20 organisms selected.
+The starting vertices for Xander's search were selected by first aligning the reference genomes' translated \emph{rplB} sequences to the \emph{rplB} model used for searching.  The protein alignment was then used to align the nucleotide sequences for each reference.  For each \emph{rplB} nucleotide reference sequence, the first consecutive 21 nucleotides aligning to the rplB model (e.g. without gaps or insertions), along with the model position the first resiude occupied were used as the search start points.  A total of 20 starting vertices were selected, one from each of the 20 organisms selected.
 
-Xander was then run on the selected starts and a summary of the results are show in Table~\ref{tab:xander_hmp_summary}.  Using the HMP mock community dataset with the start points selected Xander was able to assemble 20 \emph{rplB} gene sequences with an average protein-protein identity to the reference gene of 90\%.  About half of the resulting sequences were partial assemblies which was due to cuts in the assembly graph caused by zero coverage for parts of the reference genomes which can be seen in the average coverage data in Table~\ref{tab:xander_hmp_summary} and in detail in Supplemental 1.  Since several of the organisms overlapped by at least one 21-mer the paths in the assembly graph crossed which combined with sequencing errors lead to the differences seen between the expected protein sequence and assembled contig.
+Xander was then run on the selected starts and a summary of the results are show in Table~\ref{tab:xander_hmp_summary}.  Using the HMP mock community dataset with the start points selected Xander was able to assemble 20 \emph{rplB} gene sequences with an average protein-protein identity to the reference gene of 90\%.  About half of the resulting sequences were partial assemblies, which due to cuts in the assembly graph caused by zero coverage for parts of the reference genomes which can be seen in the average coverage data in Table~\ref{tab:xander_hmp_summary} and in detail in Supplemental 1.  Since several of the organisms overlapped by at least one 21-mer the paths in the assembly graph crossed which combined with sequencing errors lead to the differences seen between the expected protein sequence and assembled contig.
 
-Cuts in the assembly graph caused more problems than partial assemblies since if there is no path to the end of the model the A* search devolves in to an exhaustive traversal of the graph, something we specifically wanted to avoid.  To deal with this two heuristic pruning methods were developed based on the log odds ratio comparing the probability the current path was generated by the HMM or a null model described in the Methods below.  The effects of the different pruning methods can be seen in Fig~\ref{fig:comp_pruning_methods}.  By making the pruning heuristic more strict Xander considers far fewer nodes enabling faster searching and discarding non-target path segments.
-
-The HMM for \emph{rplB} was built using the seed sequences from the Functional Gene Repository (cite frontiers article).  These seed sequences were used to build an HMM for each gene using a modified version of HMMER3 using the \begin{verbatim}--enone\end{verbatim} option to disable sequence weighting (cite). HMMER3's default settings were tuned for detecting remote paralogs (cite person's phd thesis) where Xander is targeting close homologs.  The default priors sometimes caused extensive searching of nonproductive insert and delete paths. HMMER3's source code was modified to change the prior probabilities for the $delete \rightarrow match$ and $insert \rightarrow match$ transitions to 95\% probability, $delete \rightarrow delete$ and $insert \rightarrow insert$ transitions to 5\% probability.  The modifications to HMMER3 are available as a patch file against version 3.0.
+In addition to producing partial assemblies, cuts in the assembly graph can stop the search from terminating. If there is no path to the end of the model the A* search devolves in to an exhaustive traversal of the graph, something we specifically want to avoid.  To handle these cases, two heuristic pruning methods were developed based on the log odds ratio comparing the probability the current path was generated by the HMM or a null model described in the Methods below.  The effects of the different pruning methods can be seen in Fig~\ref{fig:comp_pruning_methods}.  By making the pruning heuristic more strict Xander considers far fewer nodes enabling faster searching and discarding non-target path segments.
 
 %%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Conclusions}
@@ -301,6 +298,9 @@ Xander implements a path pruning heuristics to remove paths that are unlikely to
 Xander was implemented in the Java programming language and is distributed under the terms of the GPLv3 License available from \url{https://github.com/rdpstaff/Xander-HMMgs}.  Xander uses a Bloom filter to store a compressed representation of the De Bruijn Graph. Xander consists of three primary tools; one for building a Bloom filter De Bruijn Graph, a tool for identifying starting positions, the core search tool. Support programs and scripts are also included with Xander for manipulating file formats, combining contig fragments and filtering Xander results.
 
 Any of the tools can be replaced with a $3^{rd}$ party tool using difference heuristics as long as the resulting file matches the expected format.  For example the starting vertex identification can be replaced with a $3^{rd}$ party tool so long as the resulting file contains the starting kmer and starting model position.
+
+The HMM for \emph{rplB} was built using the seed sequences from the Functional Gene Repository (cite frontiers article).  These seed sequences were used to build an HMM for each gene using a modified version of HMMER3 using the \begin{verbatim}--enone\end{verbatim} option to disable sequence weighting (cite). HMMER3's default settings were tuned for detecting remote paralogs (cite person's phd thesis) where Xander is targeting close homologs.  The default priors sometimes caused extensive searching of nonproductive insert and delete paths. HMMER3's source code was modified to change the prior probabilities for the $delete \rightarrow match$ and $insert \rightarrow match$ transitions to 95\% probability, $delete \rightarrow delete$ and $insert \rightarrow insert$ transitions to 5\% probability.  The modifications to HMMER3 are available as a patch file against version 3.0.
+
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Authors contributions}
@@ -383,7 +383,7 @@ Any of the tools can be replaced with a $3^{rd}$ party tool using difference heu
   $^*$ indicates genomes that were removed from the final analysis.
     \par
     \mbox{
-      \begin{tabular}{|c|c|c|}
+      \begin{tabular}{|c|p{5cm}|c|}
 	\hline
         Organism Name & Strain & Accession Number \\
 	\hline
@@ -434,6 +434,7 @@ Any of the tools can be replaced with a $3^{rd}$ party tool using difference heu
     \label{tab:xander_hmp_summary}
     Output of running Xander on the HMP mock community WGS dataset.  The forward and reverse searches for each reference are combined in a single row in the table with the total time for each direction's search reported.  The fragment nats (probability log base e) represent the score A* was optimizing on while the bits saved reflects the probability the sequence comes from the HMM.  The average coverage of the \emph{rplB} region computed by bowtie mapping for each reference is also reported.
     \par
+    \begin{landscape}
     \mbox{
       \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
         \hline
@@ -461,6 +462,7 @@ Any of the tools can be replaced with a $3^{rd}$ party tool using difference heu
         \hline
       \end{tabular}
     }
+      \end{landscape}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
