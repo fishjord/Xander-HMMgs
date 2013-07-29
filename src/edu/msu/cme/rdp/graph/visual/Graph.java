@@ -30,19 +30,25 @@ import java.util.*;
  */
 public class Graph implements Serializable {
     protected Map<Kmer, Set<Kmer>> edges = new HashMap();
+    protected Map<Kmer, Set<Kmer>> weakEdges = new HashMap();
     protected boolean combined;
 
     public void connect(Kmer v1, Kmer v2) {
 	if(!edges.containsKey(v1)) {
 	    edges.put(v1, new HashSet());
 	}
+	edges.get(v1).add(v2);
 
-	if(!edges.containsKey(v2)) {
-	    edges.put(v2, new HashSet());
+	if(!weakEdges.containsKey(v1)) {
+	    weakEdges.put(v1, new HashSet());
 	}
 
-	edges.get(v1).add(v2);
-	edges.get(v2).add(v1);
+	if(!weakEdges.containsKey(v2)) {
+	    weakEdges.put(v2, new HashSet());
+	}
+
+	weakEdges.get(v1).add(v2);
+	weakEdges.get(v2).add(v1);
     }
 
     public int getNumVertices() {
@@ -64,7 +70,7 @@ public class Graph implements Serializable {
 	    node = node.discoveredFrom;
 	}
     }
-
+    
     public List<Graph> getComponents(int minDiam) {
         List<Graph> ret = new ArrayList();
         if (edges.isEmpty()) {
@@ -97,8 +103,13 @@ public class Graph implements Serializable {
 	thisComp.add(kmer);
 	int ret = 0;
 
-        for (Kmer next : edges.get(kmer)) {
-	    comp.connect(kmer, next);
+	/*if(edges.containsKey(kmer)) {
+	    for (Kmer next : edges.get(kmer)) {
+		comp.connect(kmer, next);
+	    }
+	    }*/
+        for (Kmer next : weakEdges.get(kmer)) {
+		comp.connect(kmer, next);
             ret = Math.max(ret, connectedTo(next, thisComp, comp));
         }
 
@@ -110,11 +121,11 @@ public class Graph implements Serializable {
 	Map<Kmer, Integer> labels = new HashMap();
 	try {
 	    out.println("graph sg {");
-	    for (Kmer ls : edges.keySet()) {
+	    for (Kmer ls : weakEdges.keySet()) {
 		int label = labels.size();
 		labels.put(ls, label);
 		out.println("\t" + ls + "[label=\"" + label + "\"];");
-		for (Kmer rs : edges.get(ls)) {
+		for (Kmer rs : weakEdges.get(ls)) {
 		    if(labels.containsKey(rs)) {
 			continue;
 		    }

@@ -25,6 +25,7 @@ import edu.msu.cme.rdp.graph.filter.CodonWalker;
 import edu.msu.cme.rdp.graph.filter.PathHolder;
 import edu.msu.cme.rdp.kmer.Kmer;
 import edu.msu.cme.rdp.readseq.SequenceType;
+import edu.msu.cme.rdp.readseq.utils.NuclBinMapping;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -106,7 +107,7 @@ public class NodeEnumerator {
                 emission = protEmission.getAminoAcid();
             } else {
                 nextKmer = curr.kmer.shiftLeft((byte) (nextNucl & 3));
-                emission = Kmer.intToChar[nextNucl];
+                emission = NuclBinMapping.intToChar[nextNucl];
             }
 
             final long fwdHash = walker.getFwdHash();

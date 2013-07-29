@@ -51,5 +51,7 @@ public interface CodonWalker {
      *  all the way to the current char pointed by pathPtr
      */
     public String getPathString();
+
+    public int getLength();
 }
 

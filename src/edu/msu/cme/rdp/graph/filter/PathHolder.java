@@ -17,6 +17,7 @@
 package edu.msu.cme.rdp.graph.filter;
 
 import edu.msu.cme.rdp.kmer.Kmer;
+import edu.msu.cme.rdp.readseq.utils.NuclBinMapping;
 import java.util.Arrays;
 
 /**
@@ -107,7 +108,7 @@ public class PathHolder {
                 val = path[currptr];
             }
 
-            ret[index] = Kmer.intToChar[(int) (val & 3)];
+            ret[index] = NuclBinMapping.intToChar[(int) (val & 3)];
             val = val >>> 2;
             currcap--;
         }

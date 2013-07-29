@@ -60,6 +60,8 @@ public class HMMgsMain {
             BloomFilterStats.main(args);
         } else if (cmd.equals("search")) {
             TimeLimitedSearch.main(args);
+        } else if (cmd.equals("basic")) {
+            BasicSearch.main(args);
         } else if (cmd.equals("merge")) {
             ContigMerger.main(args);
         } else if (cmd.equals("license")) {

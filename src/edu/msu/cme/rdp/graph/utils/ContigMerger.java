@@ -237,24 +237,24 @@ public class ContigMerger {
             }
 
             String[] lexemes = line.trim().split("\t");
-            if ((lexemes.length != 8 && lexemes.length != 9) || lexemes[0].equals("-")) {
+            if (lexemes.length != 12 || lexemes[0].equals("-")) {
                 System.err.println("Skipping line: " + line);
                 continue;
             }
-
+            //contig_53493	nirk	1500:6:35:16409:3561/1	ADV15048	tcggcgctctacacgttcctgcagcccggg	40	210	70	left	-44.692	184	0
             int index = 0;
 
-            String seqid = lexemes[index++];
-            kmer = lexemes[index++];
-            int modelStart = Integer.valueOf(lexemes[index++]);
+            String seqid = lexemes[0];
+            String geneName = lexemes[1];
+            String readid = lexemes[2];
+            String refid = lexemes[3];
+            kmer = lexemes[4];
+            int modelStart = Integer.valueOf(lexemes[5]);
 
-            int nuclLength = Integer.valueOf(lexemes[index++]);
+            int nuclLength = Integer.valueOf(lexemes[6]);
+            int protLength = Integer.valueOf(lexemes[7]);
 
-            if (lexemes.length == 9) {
-                index++;    //prot length column
-            }
-
-            SearchDirection dir = SearchDirection.valueOf(lexemes[index++]);
+            SearchDirection dir = SearchDirection.valueOf(lexemes[8]);
 
             if (dir != lastDir) {
                 if (dir == SearchDirection.left) {

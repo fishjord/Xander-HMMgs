@@ -19,6 +19,7 @@ package edu.msu.cme.rdp.graph.filter;
 import edu.msu.cme.rdp.graph.hash.CyclicHash;
 import edu.msu.cme.rdp.graph.hash.Hash;
 import edu.msu.cme.rdp.kmer.Kmer;
+import edu.msu.cme.rdp.readseq.utils.NuclBinMapping;
 import java.io.*;
 import java.util.BitSet;
 import java.util.Date;
@@ -213,10 +214,10 @@ public class BloomFilter implements Serializable {
     public static byte[] next = new byte[4];
 
     static {
-        next[Kmer.a] = Kmer.t;
-        next[Kmer.t] = Kmer.g;
-        next[Kmer.g] = Kmer.c;
-        next[Kmer.c] = Kmer.a;
+        next[NuclBinMapping.a] = NuclBinMapping.t;
+        next[NuclBinMapping.t] = NuclBinMapping.g;
+        next[NuclBinMapping.g] = NuclBinMapping.c;
+        next[NuclBinMapping.c] = NuclBinMapping.a;
     }
 
     public class GraphState {
@@ -240,18 +241,35 @@ public class BloomFilter implements Serializable {
             }
 
             for (int i = 0; i < kmerSize; ++i) {
-                byte c = Kmer.validateLookup[s[i]];
+                byte c = NuclBinMapping.validateLookup[s[i]];
                 if (c == -1) {
                     throw new InvalidDNABaseException("Input contains non nucleotide character: " + c);
                 }
                 kmer[i] = c;
-                rkmer[kmerSize - 1 - i] = Kmer.complementLookup[c];
+                rkmer[kmerSize - 1 - i] = NuclBinMapping.complementLookup[c];
             }
             fwdHashValue = 0;
             rcHashValue = 0;
             for (int i = 0; i < kmerSize; ++i) {
                 fwdHashValue = hasher.eatRight(fwdHashValue, kmer[i]);
                 rcHashValue = hasher.eatRight(rcHashValue, rkmer[i]);
+            }
+            kmerLeftIdx = 0;
+            rkmerLeftIdx = 0;
+        }
+        int fwd;
+        int rc;
+
+        public void setStateDangerously(byte[] s) {
+            fwdHashValue = 0;
+            rcHashValue = 0;
+            for (int i = 0; i < kmerSize; ++i) {
+                fwd = s[i];
+                rc = ((fwd == NuclBinMapping.a)? NuclBinMapping.t : ((fwd == NuclBinMapping.c)? NuclBinMapping.g : ((fwd == NuclBinMapping.g)? NuclBinMapping.c : NuclBinMapping.a)));
+                //kmer[i] = s[i];
+                //rkmer[kmerSize - 1 - i] = rc;
+                fwdHashValue = hasher.eatRight(fwdHashValue, fwd);
+                rcHashValue = hasher.eatRight(rcHashValue, rc);
             }
             kmerLeftIdx = 0;
             rkmerLeftIdx = 0;
@@ -276,7 +294,7 @@ public class BloomFilter implements Serializable {
 
         //protected void loadCharRight( char inChar) {
         public void loadCharRight(char inChar) {
-            byte c = Kmer.validateLookup[inChar];
+            byte c = NuclBinMapping.validateLookup[inChar];
             if (c == -1) {
                 throw new InvalidDNABaseException("Input contains non nucleotide character: " + inChar);
             }
@@ -286,7 +304,7 @@ public class BloomFilter implements Serializable {
                 kmerLeftIdx -= kmerSize;
             }
 
-            c = Kmer.complementLookup[c];
+            c = NuclBinMapping.complementLookup[c];
             if (--rkmerLeftIdx < 0) {
                 rkmerLeftIdx += kmerSize;
             }
@@ -301,7 +319,7 @@ public class BloomFilter implements Serializable {
          */
         //protected void shiftRight( char inChar) {
         public void shiftRight(char inChar) {
-            byte c = Kmer.validateLookup[inChar];
+            byte c = NuclBinMapping.validateLookup[inChar];
             if (c == -1) {
                 throw new InvalidDNABaseException("Input contains non nucleotide character: " + inChar);
             }
@@ -311,7 +329,7 @@ public class BloomFilter implements Serializable {
                 kmerLeftIdx -= kmerSize;
             }
 
-            c = Kmer.complementLookup[c];
+            c = NuclBinMapping.complementLookup[c];
             if (--rkmerLeftIdx < 0) {
                 rkmerLeftIdx += kmerSize;
             }
@@ -323,7 +341,7 @@ public class BloomFilter implements Serializable {
          * append a char to the right, update the state
          */
         protected void shiftLeft(char inChar) {
-            byte c = Kmer.validateLookup[inChar];
+            byte c = NuclBinMapping.validateLookup[inChar];
             if (c == -1) {
                 throw new InvalidDNABaseException("Input contains non nucleotide character: " + inChar);
             }
@@ -333,7 +351,7 @@ public class BloomFilter implements Serializable {
             fwdHashValue = hasher.updateLeft(fwdHashValue, kmer[kmerLeftIdx], c);
             kmer[kmerLeftIdx] = c;
 
-            c = Kmer.complementLookup[c];
+            c = NuclBinMapping.complementLookup[c];
             rcHashValue = hasher.updateRight(rcHashValue, rkmer[rkmerLeftIdx], c);
             rkmer[rkmerLeftIdx] = c;
             if (++rkmerLeftIdx >= kmerSize) {
@@ -432,7 +450,7 @@ public class BloomFilter implements Serializable {
         public long fwdHashValue = 0;
         //protected StringBuilder path = new StringBuilder();
         public int framePtr = -1;      // index of the end of last codon
-        private static final byte startChar = Kmer.a;
+        private static final byte startChar = NuclBinMapping.a;
         /*
          * The PathHolder imposes a constraint on how the path is represented
          * The 'left most' character in a path (ie path[0]) is always the earliest
@@ -677,6 +695,10 @@ public class BloomFilter implements Serializable {
         public boolean hasMoreNucl() {
             return hasMoreCodons();
         }
+
+	public int getLength() {
+	    return pathPtr - kmerSize;
+	}
     }
 
     /**
@@ -697,12 +719,12 @@ public class BloomFilter implements Serializable {
             rcHashValue = 0;
 
             for (int i = 0; i < kmerSize; ++i) {
-                byte c = Kmer.validateLookup[s[i]];
+                byte c = NuclBinMapping.validateLookup[s[i]];
                 if (c == -1) {
                     throw new InvalidDNABaseException("Input contains non nucleotide character: " + s[i]);
                 }
                 fwdHashValue = hasher.eatRight(fwdHashValue, c);
-                rcHashValue = hasher.eatLeft(rcHashValue, Kmer.complementLookup[c]);
+                rcHashValue = hasher.eatLeft(rcHashValue, NuclBinMapping.complementLookup[c]);
             }
 
             path.init(new Kmer(s));
@@ -712,17 +734,17 @@ public class BloomFilter implements Serializable {
 
         protected void replaceHash(byte out, byte in) {
             fwdHashValue = hasher.replaceRight(fwdHashValue, out, in);
-            rcHashValue = hasher.replaceLeft(rcHashValue, Kmer.complementLookup[out], Kmer.complementLookup[in]);
+            rcHashValue = hasher.replaceLeft(rcHashValue, NuclBinMapping.complementLookup[out], NuclBinMapping.complementLookup[in]);
         }
 
         protected void updateHashForward(byte out, byte in) {
             fwdHashValue = hasher.updateRight(fwdHashValue, out, in);
-            rcHashValue = hasher.updateLeft(rcHashValue, Kmer.complementLookup[out], Kmer.complementLookup[in]);
+            rcHashValue = hasher.updateLeft(rcHashValue, NuclBinMapping.complementLookup[out], NuclBinMapping.complementLookup[in]);
         }
 
         protected void updateHashReverse(byte out, byte in) {
             fwdHashValue = hasher.updateLeft(fwdHashValue, out, in);
-            rcHashValue = hasher.updateRight(rcHashValue, Kmer.complementLookup[out], Kmer.complementLookup[in]);
+            rcHashValue = hasher.updateRight(rcHashValue, NuclBinMapping.complementLookup[out], NuclBinMapping.complementLookup[in]);
         }
 
         public NextCodon getNextCodon() {
@@ -761,12 +783,12 @@ public class BloomFilter implements Serializable {
              * load the initial kmer in the reverse order
              */
             for (int i = kmerSize - 1; i >= 0; i--) {
-                byte c = Kmer.validateLookup[s[i]];
+                byte c = NuclBinMapping.validateLookup[s[i]];
                 if (c == -1) {
                     throw new InvalidDNABaseException("Input contains non nucleotide character: " + s[i]);
                 }
                 fwdHashValue = hasher.eatLeft(fwdHashValue, c);
-                rcHashValue = hasher.eatRight(rcHashValue, Kmer.complementLookup[c]);
+                rcHashValue = hasher.eatRight(rcHashValue, NuclBinMapping.complementLookup[c]);
             }
 
             path.init(new Kmer(new StringBuilder(new String(s)).reverse().toString().toCharArray()));
@@ -776,17 +798,17 @@ public class BloomFilter implements Serializable {
 
         protected void replaceHash(byte out, byte in) {
             fwdHashValue = hasher.replaceLeft(fwdHashValue, out, in);
-            rcHashValue = hasher.replaceRight(rcHashValue, Kmer.complementLookup[out], Kmer.complementLookup[in]);
+            rcHashValue = hasher.replaceRight(rcHashValue, NuclBinMapping.complementLookup[out], NuclBinMapping.complementLookup[in]);
         }
 
         protected void updateHashForward(byte out, byte in) {
             fwdHashValue = hasher.updateLeft(fwdHashValue, out, in);
-            rcHashValue = hasher.updateRight(rcHashValue, Kmer.complementLookup[out], Kmer.complementLookup[in]);
+            rcHashValue = hasher.updateRight(rcHashValue, NuclBinMapping.complementLookup[out], NuclBinMapping.complementLookup[in]);
         }
 
         protected void updateHashReverse(byte out, byte in) {
             fwdHashValue = hasher.updateRight(fwdHashValue, out, in);
-            rcHashValue = hasher.updateLeft(rcHashValue, Kmer.complementLookup[out], Kmer.complementLookup[in]);
+            rcHashValue = hasher.updateLeft(rcHashValue, NuclBinMapping.complementLookup[out], NuclBinMapping.complementLookup[in]);
         }
 
         public NextCodon getNextCodon() {

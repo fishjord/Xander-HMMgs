@@ -72,7 +72,7 @@ public class ExploreRenderCombinedGraph {
         forward = true;
         CodonWalker walker = bloom.new RightCodonFacade(kmer);
         AStarNode startingNode = getStartNode(kmer, hmmState, forHmm, walker);
-        out.println("\t" + getNodeLabel(startingNode, hmmState));
+        out.println("\t" + getNodeLabel(startingNode, 0));
         walk(walker, startingNode, out, new NodeEnumerator(forHmm), forHmm);
 
         forward = false;
@@ -140,13 +140,15 @@ public class ExploreRenderCombinedGraph {
                 //    continue;
                 //}
 
-                if (!seenNodes.contains(next) && radius < maxRadius) {
-                    seenNodes.add(next);
-                    toVisit.push(next);
-                    next.indels = radius + 1;
-                    out.println(getNodeLabel(next, radius));
+                if (radius < maxRadius) {
+		    if(!seenNodes.contains(next)) {
+			seenNodes.add(next);
+			toVisit.push(next);
+			next.indels = radius + 1;
+			out.println(getNodeLabel(next, radius + 1));
+		    }
+		    out.println(getEdge(prev, next));
                 }
-                out.println(getEdge(prev, next));
             }
         }
     }
@@ -198,7 +200,7 @@ public class ExploreRenderCombinedGraph {
         }
 
         ret.append("\",label=\"");
-        ret.append(String.format("Emission: %s\\nState: %d\\nRadius: %d\\nScore: %.2f \\nbits: %.2f", (emission.length == 1 ? emission[0] : ProteinUtils.getInstance().translateToProtein(new String(emission), true, 11)), node.stateNo, radius, node.score, (node.realScore - HMMScorer.getNull1(radius)) / HMMScorer.ln2));
+        ret.append(String.format("Emission: %s\\nState: %d\\nRadius: %d\\nScore: %.2f \\nbits: %.2f", (emission.length == 1 ? emission[0] : ProteinUtils.getInstance().translateToProtein(new String(emission), true, 11)), node.stateNo, radius, node.score, (node.realScore - HMMScorer.getNull1(node.length)) / HMMScorer.ln2));
         ret.append("\"];");
 
         return ret.toString();
@@ -290,6 +292,8 @@ public class ExploreRenderCombinedGraph {
 
         ExploreRenderCombinedGraph explorer = new ExploreRenderCombinedGraph(bloom, forHmm, revHmm, radius, allowGaps);
 
-        explorer.explore(startingKmer, startingState, new PrintStream(new NullStream()));//System.out);
+	PrintStream out = new PrintStream("combined_graph.dot");
+        explorer.explore(startingKmer, startingState, out);
+	out.close();
     }
 }

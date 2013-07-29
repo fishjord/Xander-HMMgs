@@ -47,6 +47,8 @@ public class HMMGraphSearch {
     public static final int INT_SCALE = 10000; //This is the number of sigfigs in a HMMER3 model, so it works out quite nicely if you ask me
     private static final int upperBound = Integer.MIN_VALUE;
     private final int maxk;
+    private Map<AStarNode, List<AStarNode>> termNodes = new HashMap();
+
     //private PrintStream openedKmerStream;
     //private PrintStream closedKmerStream;
 
@@ -159,7 +161,11 @@ public class HMMGraphSearch {
             CandidatePath bestPath = new CandidatePath(goalNode, seenKmers);
             bestPath.generationTime = (System.currentTimeMillis() - kTime);
             bestPaths.add(bestPath);
-            //out.println(bestPath.score + "\t" + bestPath.k + "\t" + bestPath.i + "\t" + partialResultFromGoal(goalNode, forward, hmm.getAlphabet() == SequenceType.Protein, 0).maxSeq);
+	    for(int index = 0;index < bestPath.path.size();index++) {
+		AStarNode node = bestPath.path.get(index);
+		termNodes.put(node, bestPath.path.subList(index, bestPath.path.size()));
+	    }		            
+	    //out.println(bestPath.score + "\t" + bestPath.k + "\t" + bestPath.i + "\t" + partialResultFromGoal(goalNode, forward, hmm.getAlphabet() == SequenceType.Protein, 0).maxSeq);
 
             while (bestPaths.size() < maxk) {   //Where k is the current kth shortest path
                 CandidatePath pathAk = bestPaths.get(bestPaths.size() - 1);
@@ -184,6 +190,9 @@ public class HMMGraphSearch {
 
                     shortestPathEdges.get(starting).add(ak_i_1);
                     goalNode = astarSearch(hmm, starting, walker, seenKmers, shortestPathEdges.get(starting));
+                    if(goalNode == null) {
+                        break;
+                    }
 
                     int before = seenKmers.size();
                     CandidatePath spur = new CandidatePath(goalNode, seenKmers);
@@ -209,6 +218,10 @@ public class HMMGraphSearch {
                 kthPath.generationTime = (System.currentTimeMillis() - kTime);
 
                 bestPaths.add(kthPath);
+		for(int index = 0;index < kthPath.path.size();index++) {
+		    AStarNode node = kthPath.path.get(index);
+		    termNodes.put(node, kthPath.path.subList(index, kthPath.path.size()));
+		}		
             }
         } catch (HackTerminateException e) {
             System.err.println("Terminated on path " + bestPaths.size() + " (candidates=" + candidatePaths.size() + ")");
@@ -343,7 +356,7 @@ public class HMMGraphSearch {
             }
         }
         //Decide the intermediate goal
-        AStarNode interGoal = null;
+        AStarNode interGoal = startingNode;
         double mem;
 
         if (open.isEmpty()) {
@@ -359,12 +372,16 @@ public class HMMGraphSearch {
             if (curr.stateNo >= hmm.M()) { //We're at an "end" state
                 if (curr.hasNewKmer) {  //If it has a new kmer, great
                     curr.partial = false;
-                    System.err.println(startingNode.kmer + "\t" + openedNodes + "\t" + closed.size() + "\t" + false);
+                    //System.err.println(startingNode.kmer + "\t" + openedNodes + "\t" + closed.size() + "\t" + false);
                     return curr;
                 } else { //Otherwise move on
                     continue;
                 }
             }
+
+	    if(termNodes.containsKey(curr)) {
+		return combineWithCache(curr, termNodes.get(curr));
+	    }
 
             closed.add(curr);
 
@@ -382,8 +399,7 @@ public class HMMGraphSearch {
                 }
             }
 
-            if (interGoal == null
-                    || (curr.realScore + exitProbabilities[curr.length] - HMMScorer.getNull1(curr.length)) / ln2
+            if ((curr.realScore + exitProbabilities[curr.length] - HMMScorer.getNull1(curr.length)) / ln2
                     > (interGoal.realScore + exitProbabilities[interGoal.length] - HMMScorer.getNull1(interGoal.length)) / ln2) {
                 interGoal = curr;
             }
@@ -400,10 +416,25 @@ public class HMMGraphSearch {
                 }
             }
         }
-        System.err.println(startingNode.kmer + "\t" + openedNodes + "\t" + closed.size() + "\t" + true);
+        //System.err.println(startingNode.kmer + "\t" + openedNodes + "\t" + closed.size() + "\t" + true);
 
         interGoal.partial = true;
         return interGoal;
+    }
+    
+    private AStarNode combineWithCache(AStarNode node, List<AStarNode> cachedPath) {
+	AStarNode curr, newNode, last = node;
+	assert(node.equals(cachedPath.get(0)));
+	for(int index = 1;index < cachedPath.size();index++) {
+	    curr = cachedPath.get(index);
+	    newNode = new AStarNode(last, curr.kmer, curr.fwdHash, curr.rcHash, curr.stateNo, curr.state);
+	    newNode.score = last.score + curr.thisNodeScore;
+	    newNode.length = last.length + 3;
+	    newNode.thisNodeScore = curr.thisNodeScore;
+	    last = newNode;
+	}
+
+	return last;
     }
 
     /**
