@@ -6,7 +6,6 @@ hmmgs/
 *~
 *.aux
 *.bbl
-*.pdf
 *.dvi
 *.blg
 *.log

@@ -14,14 +14,14 @@
 %%                                     %%
 %% Uses:                               %%
 %% cite.sty, url.sty, bmc_article.cls  %%
-%% ifthen.sty. multicol.sty       %%
-%%   %%
+%% ifthen.sty. multicol.sty		       %%
+%%									   %%
 %%                                     %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                                                                 %%
+%%                                                                 %%	
 %% For instructions on how to fill out this Tex template           %%
 %% document please refer to Readme.pdf and the instructions for    %%
 %% authors page on the biomed central website                      %%
@@ -58,7 +58,7 @@
 \urlstyle{rm}
  
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 %%                                             %%
 %%  If you wish to display your graphics for   %%
 %%  your own use using includegraphic or       %%
@@ -129,7 +129,7 @@
 %% replaced by a comma in the final article %%
 %%                                          %%
 %% Ensure there are no trailing spaces at   %% 
-%% the ends of the lines                    %%     
+%% the ends of the lines                    %%     	
 %%                                          %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -233,31 +233,26 @@ We propose a gene targeted approach for assembling metagenomic datasets called X
 
 Gene targeted assembly is less resource intensive and faster than traditional whole genome metagenomic assembly.  In addition to the De Bruijn Graph, only small paths relative to the graph's size must be kept in memory.  Further reduction in the memory usage are achieved by using a probabilistic data structure for holding the De Bruijn Graph in memory, a Bloom filter \cite{bloom_space/time_1970,pell_scaling_2012}.  By targeting relatively small segments of the assembly graph by using an HMM to guide assembly, the amount of the graph that must be explored during assembly is constrained, providing a speed up over whole genome approaches.
 
-Targeted assembly of metagenomic datasets has drawn research interest and generated several approaches including EMIRGE\cite{miller_emirge:_2011} and Mira\cite{chevreux_using_2004}. EMIRGE is an expectation maximization algorithm for assembling target sequences by iterative read mapping.  The Mira assembler can perform a type of targeted assembly by using mirabait to extract out all reads that overlap with a reference set then assembling that subset of reads. Xander differs from these targeted-assembly methods, which focus on identifying reads for targeted assembly, by using a De Bruijn Graph representation of the reads.   In addition to targeted-gene assembly De Bruijn Graphs have also been used as a database for a blast-like search algorithm, BlastGraph\cite{holley_blastgraph:_2012}. However BlastGraph uses a De Bruijn Graph representation of a reference database, which can then be queried with unknowns, while Xander queries a De Bruijn Graph representation of metagenomic reads using HMMs.
+Targeted assembly of metagenomic datasets has drawn research interest and generated several approaches including EMIRGE\cite{miller_emirge:_2011} and Mira\cite{chevreux_using_2004}. EMIRGE is an expectation maximization algorithm for assembling target sequences by iterative read mapping.  The Mira assembler can perform a type of targeted assembly by using mirabait to extract out all reads that overlap with a reference set then assembling that subset of reads.  In addition to targeted-gene assembly De Bruijn Graphs have also been used as a database for a blast-like search algorithm, BlastGraph\cite{holley_blastgraph:_2012}.  Xander differs from these targeted-assembly methods, which focus on identifying reads for targeted assembly, by using a De Bruijn Graph representation of the reads.  Xander is similar to the BlastGraph approach but instead of using reads to query a De Bruijn Graph representation of the reference database, Xander queries a De Bruijn Graph representation of the reads using HMMs.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Results and Discussion %%
 %%
 \section*{Results and Discussion}
 \subsection*{HMP Mock Community}
-Xander's performance was evaluated using the Human Metabiome Project's (HMP) whole genome shotgun (WGS) mock community datasets with Ribosomal Protein L2 (rplB) selected as the target gene.  \emph{rplB} was selected because it is a well conserved single copy gene. The HMP mock community consists of 22 human gut associated microorganisms with sequenced genomes listed in Table~\ref{tab:mock_community_structure}.  Each organism has a single copy of the \emph{rplB} gene and the gene sequences of several HMP mock community members contain identical sequence regions of length 21 or greater. The HMP mock community WGS datasets consist of a total of one GB of 75-base Illumina sequences. Quality filtering reduced the size to 905 MB with an average length of 65.5 bases.
+Xander's performance was evaluated using the Human Metabiome Project's (HMP) whole genome shotgun (WGS) mock community datasets with Ribosomal Protein L2 (rplB) selected as the target gene.  \emph{rplB} was selected because it is a well conserved single copy gene.  Each organism has a single copy of the \emph{rplB} and several copies in the HMP mock community overlap by one or more 21-mer. The HMP mock community consists of 22 human gut associated microorganisms with sequenced genomes listed in Table~\ref{tab:mock_community_structure}.  The HMP mock community WGS datasets consisted of a total of one gigabase of 75 basepair Illumina sequences available from NCBI's Short Read Archive under accession numbers SRR172902, SRR172903 which were combined for all analyses.  The annotated whole genome records for each organism were downloaded from GenBank and the Coding Sequence (CDS) annotation was extracted.
 
- available from NCBI's Short Read Archive under accession numbers SRR172902, SRR172903 which were combined for all analyses.  The annotated whole genome records for each organism were downloaded from GenBank and the Coding Sequence (CDS) annotation was extracted.
+The combined dataset was quality filtered as described below, a summary of the trimming results is contained in Table~\ref{tab:trimming_stats}.  A Bloom filter was built from the combined dataset in 8 minutes 41 seconds with an estimated 0.001\% false positive rate.  The Bloom filter was built with a k-mer size of 21 using four hash functions and was one gigabyte in size.
 
-The combined dataset was quality filtered as described below, a summary of the trimming results is contained in Table~\ref{tab:trimming_stats}.  
+To evaluate the coverage of the HMP mock community dataset the combined read set was mapped to the whole genome sequences for all the organisms using Bowtie2\cite{langmead_fast_2012} summarized in Fig~\ref{fig:bowtie_mapping}.  Two organisms were not targeted for assembly: Candida albicans is a eukaryote and hence does not have a copy of bacterial \emph{rplB} and Listeria monocytogenes since only a hand full of reads mapped to it's \emph{rplB} region.
 
+The starting vertices for Xander's search were selected by first aligning the reference genomes' translated \emph{rplB} sequences to the \emph{rplB} model used for searching.  The protein alignment was then used to align the nucleotide sequences for each reference.  For each \emph{rplB} nucleotide reference sequence, the first consecutive 21 nucleotides aligning to the rplB model (e.g. without gaps or insertions), along with the model position the first resiude occupied were used as the search start points.  A total of 20 starting vertices were selected, one from each of the 20 organisms selected.
 
-To evaluate the coverage of the HMP mock community, the combined read set was mapped to the whole genome sequences for all the organisms using Bowtie2\cite{langmead_fast_2012} summarized in Fig~\ref{fig:bowtie_mapping}.  Two organisms were not targeted for assembly: Candida albicans is a eukaryote and hence does not have a copy of bacterial \emph{rplB} and Listeria monocytogenes since only a handful of reads mapped to it's \emph{rplB} region.
-
-A Bloom filter was built from the combined dataset in 8 minutes 41 seconds with an estimated 0.001\% false positive rate.  The Bloom filter was built with a k-mer size of 21 using four hash functions and was one gigabyte in size.
-
-The starting vertices for Xander's search were selected by first aligning the reference genomes' translated \emph{rplB} sequences to the \emph{rplB} model used for searching.  The protein alignment was then used to align the nucleotide sequences for each reference.  For each \emph{rplB} nucleotide reference sequence, the first consecutive 21 nucleotides aligning to the rplB model (e.g. without gaps or insertions), along with the model position the first residue occupied were used as the search start points.  A total of 20 starting vertices were selected, one from each of the 20 organisms selected.
-
-Xander was then run on the selected starts and a the results summarized in Table~\ref{tab:xander_hmp_summary}.  Using the HMP mock community dataset with the 20 selected start points, Xander assembled 20 \emph{rplB} gene sequences with an average protein-protein identity of 90\% to the closest reference gene.  About half of the resulting sequences were partial assemblies, terminating before the end of the gene.  This was due to cuts in the assembly graph caused by zero coverage for parts of the reference genomes which can be seen in the average coverage data in Table~\ref{tab:xander_hmp_summary} and in detail in Supplemental 1.  Since several of the organisms overlapped by at least one 21-mer the paths in the assembly graph crossed which combined with sequencing errors lead to the differences seen between the expected protein sequence and assembled contig.
+Xander was then run on the selected starts and a summary of the results are show in Table~\ref{tab:xander_hmp_summary}.  Using the HMP mock community dataset with the start points selected Xander was able to assemble 20 \emph{rplB} gene sequences with an average protein-protein identity to the reference gene of 90\%.  About half of the resulting sequences were partial assemblies, which due to cuts in the assembly graph caused by zero coverage for parts of the reference genomes which can be seen in the average coverage data in Table~\ref{tab:xander_hmp_summary} and in detail in Supplemental 1.  Since several of the organisms overlapped by at least one 21-mer the paths in the assembly graph crossed which combined with sequencing errors lead to the differences seen between the expected protein sequence and assembled contig.
 
 \subsection*{Primer Validation with Rizosphere Metagenome}
 Xander was used with a soil metagenomic dataset to assembly \emph{nirK} sequences.  The metagenomic sample was taken from a GLBRC test plot at Kellogg Biological Station and sequenced with the Illumina GAII sequencer.  The dataset contained approximately 530 million 100 basepair reads.  The sequence data was obtained after quality trimming was performed. The De Bruijn Graph was constructed in nine hours with a k value of 30 using a Bloom filter size of 32GB, using four hash functions, and with an estimated false positive rate of 0.5\%.
 
-These assembled sequences were then analyzed to test the sensitivity and specificity of two sets of \emph{nirK} primers, nirK1F:nirK5R \cite{braker_development_1998} and F1Cu:R5Cu \cite{hallin_pcr_1999}.  The coverage of the two sets of primers was evaluated on published \emph{nirK} sequences using the FunGene Repository.  The coverage of the two primers was also evaluated against the \emph{nirK} sequences assembled by Xander from the MSR2 dataset.  The results of the coverage analysis are show in Table~\ref{tab:nirk_primer_coverage}.  The nirK1F primer spanned a region marked as an insert in the HMM used for assembly and primer analysis which caused the gaps seen in Fig~\ref{fig:nirk_primer_conservation}.
+These assembled sequences were then analyzed to test the sensitivity and specificity of two sets of \emph{nirK} primers, nirK1F:nirK5R \cite{braker_development_1998} and F1Cu:R5Cu \cite{hallin_pcr_1999}.  The coverage of the two sets of primers was evaluated on published \emph{nirK} sequences using the FunGene Repository.  The coverage of the two primers was also evaluated against the \emph{nirK} sequences assembled by Xander from the MSR2 dataset.  The results of the coverage analysis are show in Table~\ref{tab:nirk_primer_coverage}.  The nirK1F primer spanned a region maked as an insert in the HMM used for assembly and primer analysis which caused the gaps seen in Fig~\ref{fig:nirk_primer_conservation}.
 
 \subsection*{Cuts in the Assembly Graph}
 
@@ -391,14 +386,14 @@ The scripts used to perform analyses for this paper are available from \url{http
   \label{fig:combined_graph}
   \includegraphics[width=117mm]{figs/combined_graph.png}
 \subsection*{Figure 4 - Sequence conservation of \emph{nirK} primer regions}
-\label{fig:nirk_primer_conservation}
-Sequence conservation logos for the primer regions of the \emph{nirK} sequences assembled using Xander from the MSR2 dataset. a) nirK1F b) nirK5R c) F1aCu d) R3Cu.
-\par
-a. \par\includegraphics[width=5cm]{figs/nirK1F_logo.pdf}
-b. \par\includegraphics[width=5cm]{figs/nirK5R_logo.pdf}
-c. \par\includegraphics[width=5cm]{figs/F1aCu_logo.pdf}
-d. \par\includegraphics[width=5cm]{figs/R3Cu_logo.pdf}
-
+	\label{fig:nirk_primer_conservation}
+	Sequence conservation logos for the primer regions of the \emph{nirK} sequences assembled using Xander from the MSR2 dataset. a) nirK1F b) nirK5R c) F1aCu d) R3Cu.
+	\par
+	a. \par\includegraphics[width=5cm]{figs/nirK1F_logo.pdf}
+	b. \par\includegraphics[width=5cm]{figs/nirK5R_logo.pdf}
+	c. \par\includegraphics[width=5cm]{figs/F1aCu_logo.pdf}
+	d. \par\includegraphics[width=5cm]{figs/R3Cu_logo.pdf}
+	
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -418,9 +413,9 @@ d. \par\includegraphics[width=5cm]{figs/R3Cu_logo.pdf}
     \par
     \mbox{\tiny
       \begin{tabular}{|c|p{5cm}|c|}
-        \hline
+	\hline
         Organism Name & Strain & Accession Number \\
-        \hline
+	\hline
         Streptococcus mutans & NN2025 DNA & NC\_003028 (AP010655) $^\dagger$ \\
         Listeria monocytogenes$^*$ & L99 serovar 4a & NC\_003210 (FM211688)$^\dagger$ \\
         Acinetobacter baumannii & ATCC 17978 & NC\_009085.1 \\
@@ -461,23 +456,23 @@ d. \par\includegraphics[width=5cm]{figs/R3Cu_logo.pdf}
         Staphylococcus epidermidis & ATCC 12228 plasmid pSE-12228-01 &   NC\_005008.1 \\
         Streptococcus agalactiae & 2603V/R & NC\_004116.1 \\
         Streptococcus pneumoniae & TIGR4 & NC\_003028.3 \\
-        \hline
+	\hline
       \end{tabular}
       }
   \subsection*{Table 2 - HMP Trimming summary}
-  \label{tab:trimming_stats}
-  Summary of the quality filtering results on the HMP Mock Community.  Half the reads had at least one base removed from the 3' end. 17403 reads had no bases left after trimming and were removed.
-  \par
-  \mbox{
-    \begin{tabular}{|c|c|c|c|}
-      \hline
-      & Total sequences & Total Bases & Average Length \\
-      \hline
-      Before Trimming & 14494884 & 1037 MB & 75 \\
-      After Trimming & 14477481 & 905 MB & 65.5 \\
-      \hline
-      \end{tabular}
-    }
+	\label{tab:trimming_stats}
+	Summary of the quality filtering results on the HMP Mock Community.  Half the reads had at least one base removed from the 3' end. 17403 reads had no bases left after trimming and were removed.
+	\par
+	\mbox{
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		& Total sequences & Total Bases & Average Length \\
+		\hline
+		Before Trimming & 14494884 & 1037 MB & 75 \\
+		After Trimming & 14477481 & 905 MB & 65.5 \\
+		\hline
+	\end{tabular}
+	}
   \subsection*{Table 3 - Summary of Xander results for the HMP Mock community}
     \label{tab:xander_hmp_summary}
     Output of running Xander on the HMP mock community WGS dataset.  The forward and reverse searches for each reference are combined in a single row in the table with the total time for each direction's search reported.  The fragment nats (probability log base e) represent the score A* was optimizing on while the bits saved reflects the probability the sequence comes from the HMM.  The average coverage of the \emph{rplB} region computed by bowtie mapping for each reference is also reported.
@@ -511,23 +506,23 @@ d. \par\includegraphics[width=5cm]{figs/R3Cu_logo.pdf}
       \end{tabular}
     }
       \end{landscape}
-    \subsection*{Table 4 - \emph{nirK} Primer Coverage}
-    \label{tab:nirk_primer_coverage}
-    Coverage of published \emph{nirK} primers nirK1F, nirK5R, F1aCu and R3Cu on \emph{nirK} sequences assembled from the MSR2 soil rizosphere metagenomic dataset and FunGene Repository (7,643 \emph{nirK} sequences from release 7.2) allowing up to two mismatches.
-    \par
-    \mbox{\tiny
-      \begin{tabular}{|c|c|cc|ccc|}
-        \hline
-        & & \multicolumn{2}{|c|}{FunGene Repository} & \multicolumn{3}{|c|}{MSR2} \\
-        Primer & Sequence & Number of Hits & Coverage & Covering region & Matching Primer & Coverage \\
-        \hline
-        nirK1F & GGMATGGTKCCSTGGCA & 1084 & 14\% & 113 & 1 & 1\% \\
-        nirK5R & GCCTCGATCAGRTTGTGGTT & 3656 & 48\% & 118 & 67 & 57\% \\
-        F1aCu & ATCATGGTSCTGCCGCG & 3247 & 42\% & 125 & 19 & 15\% \\
-        R3Cu & GCCTCGATCAGRTTGTGGTT & 3656 & 48\% & 118 & 67 & 58\% \\
-        \hline
-        \end{tabular}
-      }
+	\subsection*{Table 4 - \emph{nirK} Primer Coverage}
+	\label{tab:nirk_primer_coverage}
+	Coverage of published \emph{nirK} primers nirK1F, nirK5R, F1aCu and R3Cu on \emph{nirK} sequences assembled from the MSR2 soil rizosphere metagenomic dataset and FunGene Repository (7,643 \emph{nirK} sequences from release 7.2) allowing up to two mismatches.
+	\par
+	\mbox{\tiny
+	\begin{tabular}{|c|c|cc|ccc|}
+	\hline
+	& & \multicolumn{2}{|c|}{FunGene Repository} & \multicolumn{3}{|c|}{MSR2} \\
+	Primer & Sequence & Number of Hits & Coverage & Covering region & Matching Primer & Coverage \\
+	\hline
+	nirK1F & GGMATGGTKCCSTGGCA & 1084 & 14\% & 113 & 1 & 1\% \\
+	nirK5R & GCCTCGATCAGRTTGTGGTT & 3656 & 48\% & 118 & 67 & 57\% \\
+	F1aCu & ATCATGGTSCTGCCGCG & 3247 & 42\% & 125 & 19 & 15\% \\
+	R3Cu & GCCTCGATCAGRTTGTGGTT & 3656 & 48\% & 118 & 67 & 58\% \\
+	\hline
+	\end{tabular}
+	}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -545,3 +540,10 @@ d. \par\includegraphics[width=5cm]{figs/R3Cu_logo.pdf}
 
 \end{bmcformat}
 \end{document}
+
+
+
+
+
+
+
